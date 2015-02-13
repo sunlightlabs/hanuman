@@ -132,6 +132,7 @@
     // set up the event handler for the iframe
     $('iframe').on('load', function() {
         console.log('iframe loaded a new page');
+        chrome.tabs.executeScript(null, {'file': 'injected.js', 'allFrames': true})
     });
 
     // start!
