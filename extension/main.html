@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hanuman Popup</title>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <style type="text/css">
+      html, body {
+        overflow: hidden;
+      }
+      html, body, iframe, .sidebar, .frame-container, .container-main, .container-main > .row {
+        height: 100%;
+      }
+      .container-main {
+        padding-left: 0;
+      }
+      iframe {
+        width: 100%;
+        border: 0;
+        background: #ffffff;
+      }
+      .sidebar {
+        overflow-y: auto;
+      }
+      .button-row {
+        text-align: center;
+        padding-top: 10px;
+      }
+      .panel .well {
+        margin-top: 10px;
+        background-color: #2b3e50;
+        text-align: center;
+        font-size: 120%;
+      }
+      .panel .well .placeholder {
+        opacity: 0.6;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid container-main">
+
+      <div class="row">
+        <div class="col-md-9 frame-container">
+          <iframe src="http://www.pattonboggs.com/"></iframe>
+        </div>
+        <div class="col-md-3 sidebar">
+          <h3>Lobbyist Bio Finder</h3>
+
+          <!-- main wizard accordion -->
+          <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="heading-one">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion" href="#collapse-one" aria-expanded="true" aria-controls="collapse-one">
+                    Find a Bio Page
+                  </a>
+                </h4>
+              </div>
+              <div id="collapse-one" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading-one">
+                <div class="panel-body">
+                  Navigate around the lobbying website to the left until you find a page with staff bios on it. We'll assume if you navigate away from a page without clicking the "found one" button, that it's not a bio page.
+                  
+                  <div class="button-row">
+                    <button type="button" class="btn btn-danger">Quit</button> &nbsp;<button type="button" class="btn btn-success">Found one!</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="heading-two">
+                <h4 class="panel-title">
+                  <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse-two" aria-expanded="false" aria-controls="collapse-two">
+                    What's their name?
+                  </a>
+                </h4>
+              </div>
+              <div id="collapse-two" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-two">
+                <div class="panel-body">
+                  Hightlight this person's name. If the name occurs both in a page or section title and in the bio text, prefer the version in the page title.
+                  <div class="well"><span class="placeholder">[name]</span><span class="content"></span></div>
+                  
+                  <div class="button-row">
+                    <button type="button" class="btn btn-success">Done</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="heading-three">
+                <h4 class="panel-title">
+                  <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse-three" aria-expanded="false" aria-controls="collapse-three">
+                    What's their bio?
+                  </a>
+                </h4>
+              </div>
+              <div id="collapse-three" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-three">
+                <div class="panel-body">
+                  Hightlight the text of this person's bio.
+                  <div class="well"><span class="placeholder">[bio text]</span><span class="content"></span></div>
+                  
+                  <div class="button-row">
+                    <button type="button" class="btn btn-success">Done</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="heading-four">
+                <h4 class="panel-title">
+                  <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse-four" aria-expanded="false" aria-controls="collapse-four">
+                    Are they a lobbyist?
+                  </a>
+                </h4>
+              </div>
+              <div id="collapse-four" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-four">
+                <div class="panel-body">
+                  Does it look like this person lobbies the government?
+                  <div class="well"><span class="placeholder">[bio text]</span><span class="content"></span></div>
+                  
+                  <div class="button-row">
+                    <button type="button" class="btn btn-success">Yes</button> &nbsp;<button type="button" class="btn btn-danger">No</button> &nbsp;<button type="button" class="btn">Don't know</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="heading-five">
+                <h4 class="panel-title">
+                  <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse-five" aria-expanded="false" aria-controls="collapse-five">
+                    Any more?
+                  </a>
+                </h4>
+              </div>
+              <div id="collapse-five" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-five">
+                <div class="panel-body">
+                  Are there more bios on this page?
+                  <div class="well"><span class="placeholder">[bio text]</span><span class="content"></span></div>
+                  
+                  <div class="button-row">
+                    <button type="button" class="btn btn-success">Yes</button> &nbsp;<button type="button" class="btn btn-danger">No, save results</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          
+          </div>
+          <!-- end accordion -->
+
+        </div>
+      </div>
+
+    </div>
+    <script src="js/jquery-2.1.3.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+    <script src="js/app.js"></script>
+  </body>
+</html>
