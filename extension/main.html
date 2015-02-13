@@ -39,6 +39,13 @@
       .panel .well .placeholder {
         opacity: 0.6;
       }
+
+      .panel.first .first, .panel.not-first .not-first {
+        display: inline;
+      }
+      .panel.first .not-first, .panel.not-first .first {
+        display: none;
+      }
     </style>
   </head>
   <body>
@@ -46,34 +53,34 @@
 
       <div class="row">
         <div class="col-md-9 frame-container">
-          <iframe src="http://www.pattonboggs.com/"></iframe>
+          <iframe src=""></iframe>
         </div>
         <div class="col-md-3 sidebar">
-          <h3>Lobbyist Bio Finder</h3>
+          <h3>Lobbyist bio finder</h3>
 
           <!-- main wizard accordion -->
           <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
             
-            <div class="panel panel-default">
+            <div class="panel panel-default find-panel">
               <div class="panel-heading" role="tab" id="heading-one">
                 <h4 class="panel-title">
                   <a data-toggle="collapse" data-parent="#accordion" href="#collapse-one" aria-expanded="true" aria-controls="collapse-one">
-                    Find a Bio Page
+                    Find a bio page
                   </a>
                 </h4>
               </div>
               <div id="collapse-one" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading-one">
                 <div class="panel-body">
-                  Navigate around the lobbying website to the left until you find a page with staff bios on it. We'll assume if you navigate away from a page without clicking the "found one" button, that it's not a bio page.
+                  Navigate around the lobbying website to the left until you find <span class="first">a</span><span class="not-first">another</span> page with staff bios on it. We'll assume if you navigate away from a page without clicking the "found one" button, that it's not a bio page.
                   
                   <div class="button-row">
-                    <button type="button" class="btn btn-danger">Quit</button> &nbsp;<button type="button" class="btn btn-success">Found one!</button>
+                    <button type="button" class="btn btn-danger quit">Quit</button> &nbsp;<button type="button" class="btn btn-info new-firm">New firm</button> &nbsp;<button type="button" class="btn btn-success found-one">Found one!</button>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="panel panel-default">
+            <div class="panel panel-default name-panel">
               <div class="panel-heading" role="tab" id="heading-two">
                 <h4 class="panel-title">
                   <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse-two" aria-expanded="false" aria-controls="collapse-two">
@@ -83,17 +90,17 @@
               </div>
               <div id="collapse-two" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-two">
                 <div class="panel-body">
-                  Hightlight this person's name. If the name occurs both in a page or section title and in the bio text, prefer the version in the page title.
+                  Hightlight the name of <span class="first">a</span><span class="not-first">another</span> person with a bio. If the name occurs both in a page or section title and in the bio text, prefer the version in the page title.
                   <div class="well"><span class="placeholder">[name]</span><span class="content"></span></div>
                   
                   <div class="button-row">
-                    <button type="button" class="btn btn-success">Done</button>
+                    <button type="button" class="btn btn-success done">Done</button>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="panel panel-default">
+            <div class="panel panel-default bio-panel">
               <div class="panel-heading" role="tab" id="heading-three">
                 <h4 class="panel-title">
                   <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse-three" aria-expanded="false" aria-controls="collapse-three">
@@ -107,13 +114,13 @@
                   <div class="well"><span class="placeholder">[bio text]</span><span class="content"></span></div>
                   
                   <div class="button-row">
-                    <button type="button" class="btn btn-success">Done</button>
+                    <button type="button" class="btn btn-success done">Done</button>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="panel panel-default">
+            <div class="panel panel-default lobbyist-panel">
               <div class="panel-heading" role="tab" id="heading-four">
                 <h4 class="panel-title">
                   <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse-four" aria-expanded="false" aria-controls="collapse-four">
@@ -127,13 +134,13 @@
                   <div class="well"><span class="placeholder">[bio text]</span><span class="content"></span></div>
                   
                   <div class="button-row">
-                    <button type="button" class="btn btn-success">Yes</button> &nbsp;<button type="button" class="btn btn-danger">No</button> &nbsp;<button type="button" class="btn">Don't know</button>
+                    <button type="button" class="btn btn-success yes">Yes</button> &nbsp;<button type="button" class="btn btn-danger no">No</button> &nbsp;<button type="button" class="btn dunno">Don't know</button>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="panel panel-default">
+            <div class="panel panel-default any-more-panel">
               <div class="panel-heading" role="tab" id="heading-five">
                 <h4 class="panel-title">
                   <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse-five" aria-expanded="false" aria-controls="collapse-five">
@@ -147,7 +154,7 @@
                   <div class="well"><span class="placeholder">[bio text]</span><span class="content"></span></div>
                   
                   <div class="button-row">
-                    <button type="button" class="btn btn-success">Yes</button> &nbsp;<button type="button" class="btn btn-danger">No, save results</button>
+                    <button type="button" class="btn btn-success yes">Yes</button> &nbsp;<button type="button" class="btn btn-danger no">No, save results</button>
                   </div>
                 </div>
               </div>
@@ -161,6 +168,7 @@
 
     </div>
     <script src="js/jquery-2.1.3.min.js"></script>
+    <script src="js/underscore.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
 
     <script src="js/app.js"></script>
