@@ -2,6 +2,8 @@
     SITES = [
         "http://www.pattonboggs.com/"
     ]
+    TRUNC_LENGTH = 200;
+
     var currentSite = null;
     var currentUrl = null;
     var currentState = null;
@@ -19,7 +21,8 @@
         visitedNonbio = [];
         visitedBio = [];
 
-        $('iframe').attr('src', currentSite);
+        $('webview').attr('src', currentSite);
+        if (page) page.site = currentSite;
     }
 
     var resetPageFinder = function() {
@@ -35,7 +38,7 @@
     }
 
     var setWellText = function(well, text) {
-        well.find('.content').text(text);
+        well.find('.content').html(text.replace("\n", "<br />"));
         if (text == "") {
             well.find('.placeholder').show();
         } else {
@@ -60,7 +63,7 @@
 
         if (state == 'name') {
             // get a new person object ready
-            person = {'name': null, 'bio': null, 'lobbyist': null};
+            person = {'name': null, 'bio': [], 'lobbyist': null};
             page.people.push(person);
         }
     }
@@ -89,15 +92,11 @@
 
     // name panel
     $('.name-panel .done').on('click', function() {
-        // save their name into the object
-        person.name = $('.name-panel .well .content').text();
         setState('bio');
     })
 
     // bio panel
     $('.bio-panel .done').on('click', function() {
-        // save their bio into the object
-        person.bio = $('.bio-panel .well .content').text();
         setState('lobbyist');
     })
 
@@ -124,16 +123,63 @@
 
         // go back to the find panel, for the second time
         $('.find-panel').removeClass('first').addClass('not-first');
+        resetNameFinder();
         setState('find');
         // but when we get to the name panel, it'll be the first time there for this page
         $('.name-panel').removeClass('not-first').addClass('first');
     })
 
-    // set up the event handler for the iframe
-    $('webview').on('loadstop', function() {
-        console.log('iframe loaded a new page');
-        $(this)[0].executeScript({'file': 'injected.js'})
+    // set up event handlers for the iframe
+    var webview = $('webview');
+    webview[0].addEventListener('consolemessage', function(e) {
+        console.log('webview:', e.message);
     });
+
+    webview.on('contentload', function() {
+        console.log('iframe loaded a new page');
+        webview[0].executeScript({'file': 'js/jquery-2.1.3.min.js'});
+        webview[0].executeScript({'file': 'js/injected.js'}, function() {
+            webview[0].contentWindow.postMessage('hanuman_hello', '*')
+        })
+    });
+
+    var messageHandlers = {
+        'setUrl': function(url) {
+            currentUrl = url;
+            visitedNonbio.push(url);
+        },
+        'updateSelection': function(selection) {
+            console.log(selection);
+            
+            if (currentState == 'name') {
+                person.name = selection;
+                setWellText($('.name-panel .well'), selection.selection_text.trim());
+            } else if (currentState == 'bio') {
+                person.bio = [selection];
+
+                var wellText = selection.selection_text.trim();
+                if (wellText.length > TRUNC_LENGTH) {
+                    console.log('truncating');
+                    var ss_length = (TRUNC_LENGTH / 2) - 5;
+                    wellText = wellText.substring(0, ss_length) + " ... " + wellText.substring(wellText.length - ss_length, wellText.length);
+                }
+                console.log(wellText);
+                setWellText($('.bio-panel .well'), wellText);
+            }
+        }
+    }
+
+    window.addEventListener('message', function(event) {
+        if (event.source == webview[0].contentWindow) {
+            // this is a message from the child frame
+            payload = JSON.parse(event.data);
+            if (messageHandlers[payload.action]) {
+                messageHandlers[payload.action](payload.data);
+            } else {
+                console.log('no handler for', payload.action);
+            }
+        }
+    }, false);
 
     // start!
     newFirm();
