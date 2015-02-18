@@ -130,9 +130,9 @@
     })
 
     // set up the event handler for the iframe
-    $('iframe').on('load', function() {
+    $('webview').on('loadstop', function() {
         console.log('iframe loaded a new page');
-        chrome.tabs.executeScript(null, {'file': 'injected.js', 'allFrames': true})
+        $(this)[0].executeScript({'file': 'injected.js'})
     });
 
     // start!
