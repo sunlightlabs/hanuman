@@ -51,6 +51,28 @@
       .panel.first .not-first, .panel.not-first .first {
         display: none;
       }
+
+      .chunk-title {
+        background: #404c59;
+        padding: 8px;
+      }
+      .chunk-title .btn {
+        padding-left: 4px;
+        display: block;
+        float: right;
+      }
+      .chunk-body {
+        background: #485563;
+        padding: 8px;
+        font-size: 80%;
+      }
+      .selection-type {
+        text-align: center;
+      }
+      .selection-type .button-row {
+        padding: 5px 0 5px 0;
+      }
+
     </style>
   </head>
   <body>
@@ -115,9 +137,16 @@
                 <div class="panel-body">
                   Hightlight the text of this person's bio, as well as any lists of information about them (where they attended school, etc.), then hit "save." You can save multiple chunks.
                   <div class="well"><span class="placeholder">[bio text]</span><span class="content"></span></div>
+                  <div class="selection-type">
+                    <span class="type-label">Selection type:</span> <select><option value="prose">Prose</option><option value="list_table">List/Table</option></select>
+                    <div class="button-row">
+                      <button type="button" class="btn btn-sm btn-danger clear"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Clear</button>
+                      <button type="button" class="btn btn-sm btn-info add"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add</button>
+                    </div>
+                  </div>
                   
                   <div class="saved-chunks"></div>
-                  
+
                   <div class="button-row">
                     <button type="button" class="btn btn-success done">Done</button>
                   </div>
@@ -166,6 +195,20 @@
       </div>
 
     </div>
+
+    <script type="text/html" id="chunk-tpl">
+      <div class="chunk">
+        <div class="chunk-title">Prose <button type="button" class="btn btn-xs btn-danger remove"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button></div>
+        <div class="chunk-body">
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+          tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+          quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+          consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+          cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+          proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </div>
+      </div>
+    </script>
     <script src="js/jquery-2.1.3.min.js"></script>
     <script src="js/underscore.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
