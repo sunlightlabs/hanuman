@@ -161,7 +161,7 @@
                 if (wellText.length > TRUNC_LENGTH) {
                     console.log('truncating');
                     var ss_length = (TRUNC_LENGTH / 2) - 5;
-                    wellText = wellText.substring(0, ss_length) + " ... " + wellText.substring(wellText.length - ss_length, wellText.length);
+                    wellText = wellText.substring(0, ss_length) + " <strong>...</strong> " + wellText.substring(wellText.length - ss_length, wellText.length);
                 }
                 console.log(wellText);
                 setWellText($('.bio-panel .well'), wellText);
