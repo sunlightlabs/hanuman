@@ -99,6 +99,12 @@
     $('.bio-panel .done').on('click', function() {
         setState('lobbyist');
     })
+    $('.bio-panel .add').on('click', function() {
+        var tpl = $('#chunk-tpl').html();
+        var rendered = tim(tpl, {'type': $('.bio-panel option:selected').html(), 'body': $('.bio-panel .well .content').html()});
+
+        $('.bio-panel .saved-chunks').append(rendered);
+    });
 
     // name panel
     $('.lobbyist-panel .btn').on('click', function() {
