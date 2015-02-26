@@ -106,6 +106,38 @@
         $('.bio-panel .saved-chunks').append(rendered);
     });
 
+    // sections within the bio panel
+    var switchSection = function($section) {
+        var $inactives = $section.parent().find('.panel-section').not($section);
+        
+        // class toggling
+        $inactives.removeClass('panel-section-active').addClass('panel-section-inactive');
+        $section.removeClass('panel-section-inactive').addClass('panel-section-active');
+
+        // offset stuff
+        var absOffset = $section.offset();
+        var barOffset = $('.sidebar-top').offset();
+        var chevronOffset = $('.chevron-rel').offset();
+
+        // animate the chevron
+        $('.chevron').animate({'top': absOffset.top - chevronOffset.top + parseInt($section.css('padding-top'))});
+
+        // scroll the sidebar
+        $('.sidebar').animate({scrollTop: absOffset.top - barOffset.top - 15});
+
+        // toggle form control states
+        $section.find('button,select').removeAttr('disabled');
+        $inactives.find('button,select').attr('disabled', 'disabled');
+
+    }
+    $('.bio-panel').on('click', '.panel-section-inactive', function(evt) {
+        console.log('clicked');
+        var $target = $(evt.target);
+        var $clicked = $target.hasClass('panel-section-inactive') ? $target : $target.parents('.panel-section-inactive').eq(0);
+
+        switchSection($clicked);
+    })
+
     // name panel
     $('.lobbyist-panel .btn').on('click', function() {
         // are they a lobbyist?

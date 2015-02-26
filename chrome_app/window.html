@@ -73,6 +73,31 @@
         padding: 5px 0 5px 0;
       }
 
+      .panel-section {
+        margin-left: 20px;
+        opacity: 0.5;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px dotted rgba(255,255,255,0.5);
+      }
+      .panel-section-first {
+        margin-top: 0;
+        padding-top: 0;
+        border-top: 0;
+      }
+      .panel-section-active {
+        opacity: 1;
+      }
+
+      .chevron-rel {
+        position: relative;
+      }
+      .chevron {
+        position: absolute;
+        font-size: 120%;
+        left: -4px;
+      }
+
     </style>
   </head>
   <body>
@@ -83,6 +108,8 @@
           <webview src=""></webview>
         </div>
         <div class="col-md-3 sidebar">
+          <div class="sidebar-top"></div>
+
           <h3>Lobbyist bio finder</h3>
 
           <!-- main wizard accordion -->
@@ -135,21 +162,45 @@
               </div>
               <div id="collapse-three" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-three">
                 <div class="panel-body">
-                  Hightlight the text of this person's bio, as well as any lists of information about them (where they attended school, etc.), then hit "save." You can save multiple chunks.
-                  <div class="well"><span class="placeholder">[bio text]</span><span class="content"></span></div>
-                  <div class="selection-type">
-                    <span class="type-label">Selection type:</span> <select><option value="prose">Prose</option><option value="list_table">List/Table</option></select>
+                  <div class="chevron-rel">
+                    <div class="chevron"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></div>
+                  </div>
+                  
+                  <div class="panel-section panel-section-active panel-section-first">
+                    Hightlight the name of <span class="first">a</span><span class="not-first">another</span> person with a bio. If the name occurs both in a page or section title and in the bio text, prefer the version in the page title.
+                    <div class="well"><span class="placeholder">[name]</span><span class="content"></span></div>
+                    
                     <div class="button-row">
-                      <button type="button" class="btn btn-sm btn-danger clear"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Clear</button>
-                      <button type="button" class="btn btn-sm btn-info add"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add</button>
+                      <button type="button" class="btn btn-success done">Done</button>
                     </div>
                   </div>
                   
-                  <div class="saved-chunks"></div>
+                  <div class="panel-section panel-section-inactive">
+                    Hightlight the text of this person's bio, as well as any lists of information about them (where they attended school, etc.), then hit "save." You can save multiple chunks.
+                    <div class="well"><span class="placeholder">[bio text]</span><span class="content"></span></div>
+                    <div class="selection-type">
+                      <span class="type-label">Selection type:</span> <select><option value="prose">Prose</option><option value="list_table">List/Table</option></select>
+                      <div class="button-row">
+                        <button type="button" class="btn btn-sm btn-danger clear"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Clear</button>
+                        <button type="button" class="btn btn-sm btn-info add"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add</button>
+                      </div>
+                    </div>
+                    
+                    <div class="saved-chunks"></div>
 
-                  <div class="button-row">
-                    <button type="button" class="btn btn-success done">Done</button>
+                    <div class="button-row">
+                      <button type="button" class="btn btn-success done">Done</button>
+                    </div>
                   </div>
+                  
+                  <div class="panel-section panel-section-inactive">
+                    Does it look like this person lobbies the government?
+                    
+                    <div class="button-row">
+                      <button type="button" class="btn btn-success yes">Yes</button> &nbsp;<button type="button" class="btn btn-danger no">No</button> &nbsp;<button type="button" class="btn dunno">Don't know</button>
+                    </div>
+                  </div>
+                
                 </div>
               </div>
             </div>
