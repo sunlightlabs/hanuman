@@ -52,6 +52,9 @@
         display: none;
       }
 
+      .chunk {
+        margin-top: 10px;
+      }
       .chunk-title {
         background: #404c59;
         padding: 8px;
@@ -115,10 +118,10 @@
           <!-- main wizard accordion -->
           <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
             
-            <div class="panel panel-default find-panel">
+            <div class="panel panel-default find-panel" data-state="find">
               <div class="panel-heading" role="tab" id="heading-one">
                 <h4 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion" href="#collapse-one" aria-expanded="true" aria-controls="collapse-one"></a>Find a bio page
+                  <a data-toggle="collapse" data-parent="#accordion" href="#collapse-one" aria-expanded="true" aria-controls="collapse-one">Find a bio page</a>
                   
                 </h4>
               </div>
@@ -136,28 +139,10 @@
               </div>
             </div>
 
-            <div class="panel panel-default name-panel">
-              <div class="panel-heading" role="tab" id="heading-two">
-                <h4 class="panel-title">
-                  <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse-two" aria-expanded="false" aria-controls="collapse-two"></a>What's their name?
-                </h4>
-              </div>
-              <div id="collapse-two" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-two">
-                <div class="panel-body">
-                  Hightlight the name of <span class="first">a</span><span class="not-first">another</span> person with a bio. If the name occurs both in a page or section title and in the bio text, prefer the version in the page title.
-                  <div class="well"><span class="placeholder">[name]</span><span class="content"></span></div>
-                  
-                  <div class="button-row">
-                    <button type="button" class="btn btn-success done">Done</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="panel panel-default bio-panel">
+            <div class="panel panel-default bio-panel" data-state="bio">
               <div class="panel-heading" role="tab" id="heading-three">
                 <h4 class="panel-title">
-                  <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse-three" aria-expanded="false" aria-controls="collapse-three"></a>What's their bio?
+                  <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse-three" aria-expanded="false" aria-controls="collapse-three">Info about <span class="bio-title-name">Person #1</span></a>
                 </h4>
               </div>
               <div id="collapse-three" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-three">
@@ -166,7 +151,7 @@
                     <div class="chevron"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></div>
                   </div>
                   
-                  <div class="panel-section panel-section-active panel-section-first">
+                  <div class="panel-section panel-section-first name-section">
                     Hightlight the name of <span class="first">a</span><span class="not-first">another</span> person with a bio. If the name occurs both in a page or section title and in the bio text, prefer the version in the page title.
                     <div class="well"><span class="placeholder">[name]</span><span class="content"></span></div>
                     
@@ -175,7 +160,7 @@
                     </div>
                   </div>
                   
-                  <div class="panel-section panel-section-inactive">
+                  <div class="panel-section bio-section">
                     Hightlight the text of this person's bio, as well as any lists of information about them (where they attended school, etc.), then hit "save." You can save multiple chunks.
                     <div class="well"><span class="placeholder">[bio text]</span><span class="content"></span></div>
                     <div class="selection-type">
@@ -193,11 +178,11 @@
                     </div>
                   </div>
                   
-                  <div class="panel-section panel-section-inactive">
+                  <div class="panel-section lobbyist-section">
                     Does it look like this person lobbies the government?
                     
                     <div class="button-row">
-                      <button type="button" class="btn btn-success yes">Yes</button> &nbsp;<button type="button" class="btn btn-danger no">No</button> &nbsp;<button type="button" class="btn dunno">Don't know</button>
+                      <button type="button" class="btn btn-sm btn-success yes">Yes</button> &nbsp;<button type="button" class="btn btn-sm btn-danger no">No</button> &nbsp;<button type="button" class="btn btn-sm dunno">Don't know</button>
                     </div>
                   </div>
                 
@@ -205,27 +190,10 @@
               </div>
             </div>
 
-            <div class="panel panel-default lobbyist-panel">
-              <div class="panel-heading" role="tab" id="heading-four">
-                <h4 class="panel-title">
-                  <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse-four" aria-expanded="false" aria-controls="collapse-four"></a>Are they a lobbyist?
-                </h4>
-              </div>
-              <div id="collapse-four" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-four">
-                <div class="panel-body">
-                  Does it look like this person lobbies the government?
-                  
-                  <div class="button-row">
-                    <button type="button" class="btn btn-success yes">Yes</button> &nbsp;<button type="button" class="btn btn-danger no">No</button> &nbsp;<button type="button" class="btn dunno">Don't know</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="panel panel-default any-more-panel">
+            <div class="panel panel-default any-more-panel" data-state="any-more">
               <div class="panel-heading" role="tab" id="heading-five">
                 <h4 class="panel-title">
-                  <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse-five" aria-expanded="false" aria-controls="collapse-five"></a>Any more?
+                  <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse-five" aria-expanded="false" aria-controls="collapse-five">Any more?</a>
                 </h4>
               </div>
               <div id="collapse-five" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-five">

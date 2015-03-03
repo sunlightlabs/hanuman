@@ -12,7 +12,6 @@
 
     // data-tracking objects
     page = null;
-    person = null;
 
     var newFirm = function() {
         resetPageFinder();
@@ -55,18 +54,20 @@
         if (state == 'find') {
             // get a new page object ready
             page = {
-                'people': [],
                 'url': null,
                 'site': currentSite
             }
         }
 
-        if (state == 'name') {
-            // get a new person object ready
-            person = {'name': null, 'bio': [], 'lobbyist': null};
-            page.people.push(person);
+        if (state == 'bio') {
+            switchSection($('.name-section'), true);
         }
     }
+
+    // if they manually jump around, set the state variable right, but don't reset anything
+    $('.panel-title a').on('click', function() {
+        currentState = $(this).parents('.panel').eq(0).attr('data-state');
+    })
 
     // deal with all the button event handlers -- so many, geez
 
@@ -84,51 +85,74 @@
         visitedBio.push(currentUrl);
 
         // go to the next panel for the first time
-        var next = $('.name-panel');
+        var next = $('.bio-panel').eq(0);
         next.addClass('first').removeClass('not-first');
-        setState('name');
+        setState('bio');
         page.url = currentUrl;
     })
 
-    // name panel
-    $('.name-panel .done').on('click', function() {
-        setState('bio');
-    })
-
     // bio panel
-    $('.bio-panel .done').on('click', function() {
-        setState('lobbyist');
+
+    // sections within the bio panel
+    // -- name section
+    $('.bio-panel .name-section .done').on('click', function() {
+        switchSection($('.bio-section'));
+    });
+    // -- bio section
+    $('.bio-panel .bio-section .done').on('click', function() {
+        switchSection($('.lobbyist-section'));
     })
-    $('.bio-panel .add').on('click', function() {
+    $('.bio-panel .bio-section .add').on('click', function() {
         var tpl = $('#chunk-tpl').html();
-        var rendered = tim(tpl, {'type': $('.bio-panel option:selected').html(), 'body': $('.bio-panel .well .content').html()});
+        var well = $('.bio-panel .bio-section .well');
+        var selectedType = $('.bio-panel option:selected');
+
+        var rendered = $(tim(tpl, {'type': selectedType.html(), 'body': well.find('.content').html()}));
+
+        var selection = well.data('selection');
+        selection.type = $('.bio-panel option:selected').attr('value');
+        rendered.data('selection', selection);
 
         $('.bio-panel .saved-chunks').append(rendered);
     });
+    $('.bio-panel .bio-section').on('click', '.chunk .remove', function(evt) {
+        $(evt.target).parents('.chunk').remove();
+    })
+    $('.bio-panel .lobbyist-section .btn').on('click', function() {
+        // are they a lobbyist?
+        var $this = $(this);
+        var is_lobbyist = $this.hasClass('yes') ? 'yes' : ($this.hasClass('no') ? 'no' : 'dunno');
 
-    // sections within the bio panel
-    var switchSection = function($section) {
-        var $inactives = $section.parent().find('.panel-section').not($section);
-        
-        // class toggling
-        $inactives.removeClass('panel-section-active').addClass('panel-section-inactive');
-        $section.removeClass('panel-section-inactive').addClass('panel-section-active');
+        // save their answer into the object
+        $('.bio-panel').data('is_lobbyist', is_lobbyist);
+        setState('any-more');
+    })
+    var switchSection = function($section, noAnimation) {
+        // delay this to keep button clicks in active sections from triggering the inactive-section click handler
+        setTimeout(function() {
+            var $inactives = $section.parent().find('.panel-section').not($section);
+            
+            // class toggling
+            $inactives.removeClass('panel-section-active').addClass('panel-section-inactive');
+            $section.removeClass('panel-section-inactive').addClass('panel-section-active');
 
-        // offset stuff
-        var absOffset = $section.offset();
-        var barOffset = $('.sidebar-top').offset();
-        var chevronOffset = $('.chevron-rel').offset();
+            // offset stuff
+            var absOffset = $section.offset();
+            var barOffset = $('.sidebar-top').offset();
+            var chevronOffset = $('.chevron-rel').offset();
 
-        // animate the chevron
-        $('.chevron').animate({'top': absOffset.top - chevronOffset.top + parseInt($section.css('padding-top'))});
+            // animate the chevron
+            $('.chevron').animate({'top': absOffset.top - chevronOffset.top + parseInt($section.css('padding-top'))});
 
-        // scroll the sidebar
-        $('.sidebar').animate({scrollTop: absOffset.top - barOffset.top - 15});
+            if (!(noAnimation != undefined)) {
+                // scroll the sidebar
+                $('.sidebar').animate({scrollTop: absOffset.top - barOffset.top - 15});
+            }
 
-        // toggle form control states
-        $section.find('button,select').removeAttr('disabled');
-        $inactives.find('button,select').attr('disabled', 'disabled');
-
+            // toggle form control states
+            $section.find('button,select').removeAttr('disabled');
+            $inactives.find('button,select').attr('disabled', 'disabled');
+        }, 0);
     }
     $('.bio-panel').on('click', '.panel-section-inactive', function(evt) {
         console.log('clicked');
@@ -138,26 +162,33 @@
         switchSection($clicked);
     })
 
-    // name panel
-    $('.lobbyist-panel .btn').on('click', function() {
-        // are they a lobbyist?
-        var $this = $(this);
-        var is_lobbyist = $this.hasClass('yes') ? 'yes' : ($this.hasClass('no') ? 'no' : 'dunno');
-
-        // save their answer into the object
-        person.lobbyist = is_lobbyist
-        setState('any-more');
-    })
-
     // any more panel
     $('.any-more-panel .yes').on('click', function() {
         // go back to the name panel, for the second time
-        $('.name-panel').removeClass('first').addClass('not-first');
-        setState('name');
+        $('.bio-panel').removeClass('first').addClass('not-first');
+        setState('bio');
     })
     $('.any-more-panel .no').on('click', function() {
         // FIXME: save some shit
-        console.log('would save', page)
+        var toSave = {
+            'url': page.url,
+            'site': page.site,
+            'people': []
+        }
+        $('.bio-panel').each(function() {
+            var $this = $(this);
+            var person = {
+                'name': $this.find('.name-section .well').data('selection'),
+                'bio': [],
+                'is_lobbyist': $this.data('is_lobbyist')
+            }
+            $this.find('.chunk').each(function() {
+                person.bio.push($(this).data('selection'));
+            })
+
+            toSave.people.push(person);
+        })
+        console.log('would save', toSave);
 
         // go back to the find panel, for the second time
         $('.find-panel').removeClass('first').addClass('not-first');
@@ -189,20 +220,18 @@
         'updateSelection': function(selection) {
             console.log(selection);
             
-            if (currentState == 'name') {
-                person.name = selection;
-                setWellText($('.name-panel .well'), selection.selection_text.trim());
-            } else if (currentState == 'bio') {
-                person.bio = [selection];
+            if (currentState == 'bio') {
+                var $section = $('.bio-panel .panel-section-active');
 
-                var wellText = selection.selection_text.trim();
-                if (wellText.length > TRUNC_LENGTH) {
-                    console.log('truncating');
+                var well = $section.find('.well');
+                well.data('selection', selection);
+
+                var displayText = selection.selection_text.trim();
+                if (displayText.length > TRUNC_LENGTH) {
                     var ss_length = (TRUNC_LENGTH / 2) - 5;
-                    wellText = wellText.substring(0, ss_length) + " <strong>...</strong> " + wellText.substring(wellText.length - ss_length, wellText.length);
+                    displayText = displayText.substring(0, ss_length) + " <strong>...</strong> " + displayText.substring(displayText.length - ss_length, displayText.length);
                 }
-                console.log(wellText);
-                setWellText($('.bio-panel .well'), wellText);
+                setWellText(well, displayText);
             }
         }
     }
