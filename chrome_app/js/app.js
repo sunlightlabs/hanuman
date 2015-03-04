@@ -45,10 +45,16 @@
         }
     }
 
+    var panelGroup = $('.panel-group');
+
     var setState = function(state) {
-        if (!$('.' + state + '-panel .panel-collapse').hasClass('in')) {
-            $('.' + state + '-panel .panel-heading a').click();
+        // check if the currently expanded thing has the class of the state, and if not, find the first exemplar of that state and expand it
+        var currentExpanded = panelGroup.find('.panel-collapse.in').parents('.panel');
+        if (!(currentExpanded.length && currentExpanded.hasClass(state + '-panel'))) {
+            currentExpanded = $('.' + state + '-panel').eq(0);
+            currentExpanded.find('.panel-heading a').click();
         }
+
         currentState = state;
 
         if (state == 'find') {
@@ -60,33 +66,31 @@
         }
 
         if (state == 'bio') {
-            switchSection($('.name-section'), true);
+            switchSection(currentExpanded.find('.name-section'), true);
         }
     }
 
     // if they manually jump around, set the state variable right, but don't reset anything
-    $('.panel-title a').on('click', function() {
+    panelGroup.on('click', '.panel-title a', function() {
         currentState = $(this).parents('.panel').eq(0).attr('data-state');
     })
 
     // deal with all the button event handlers -- so many, geez
 
     // find a bio panel
-    $('.find-panel .quit').on('click', function() {
+    panelGroup.on('click', '.find-panel .quit', function() {
         window.close();
     })
-    $('.find-panel .new-firm').on('click', function() {
+    panelGroup.on('click', '.find-panel .new-firm', function() {
         newFirm();
     })
-    $('.find-panel .found-one').on('click', function() {
+    panelGroup.on('click', '.find-panel .found-one', function() {
         // remove the current URL from the non-bio list if it's in there
         visitedNonbio = _.reject(visitedNonbio, function(el) { return el == currentUrl });
         // and add it to the bio list
         visitedBio.push(currentUrl);
 
         // go to the next panel for the first time
-        var next = $('.bio-panel').eq(0);
-        next.addClass('first').removeClass('not-first');
         setState('bio');
         page.url = currentUrl;
     })
@@ -95,36 +99,37 @@
 
     // sections within the bio panel
     // -- name section
-    $('.bio-panel .name-section .done').on('click', function() {
+    panelGroup.on('click', '.bio-panel .name-section .done', function() {
         switchSection($('.bio-section'));
     });
     // -- bio section
-    $('.bio-panel .bio-section .done').on('click', function() {
+    panelGroup.on('click', '.bio-panel .bio-section .done', function() {
         switchSection($('.lobbyist-section'));
     })
-    $('.bio-panel .bio-section .add').on('click', function() {
+    panelGroup.on('click', '.bio-panel .bio-section .add', function(evt) {
         var tpl = $('#chunk-tpl').html();
-        var well = $('.bio-panel .bio-section .well');
-        var selectedType = $('.bio-panel option:selected');
+        var panel = $(evt.target).parents('.bio-panel');
+        var well = panel.find('.bio-section .well');
+        var selectedType = panel.find('option:selected');
 
         var rendered = $(tim(tpl, {'type': selectedType.html(), 'body': well.find('.content').html()}));
 
         var selection = well.data('selection');
-        selection.type = $('.bio-panel option:selected').attr('value');
+        selection.type = selectedType.attr('value');
         rendered.data('selection', selection);
 
-        $('.bio-panel .saved-chunks').append(rendered);
+        panel.find('.saved-chunks').append(rendered);
     });
-    $('.bio-panel .bio-section').on('click', '.chunk .remove', function(evt) {
+    panelGroup.on('click', '.bio-panel .bio-section .chunk .remove', function(evt) {
         $(evt.target).parents('.chunk').remove();
     })
-    $('.bio-panel .lobbyist-section .btn').on('click', function() {
+    panelGroup.on('click', '.bio-panel .lobbyist-section .btn', function(evt) {
         // are they a lobbyist?
-        var $this = $(this);
+        var $this = $(evt.target);
         var is_lobbyist = $this.hasClass('yes') ? 'yes' : ($this.hasClass('no') ? 'no' : 'dunno');
 
         // save their answer into the object
-        $('.bio-panel').data('is_lobbyist', is_lobbyist);
+        $this.parents('.bio-panel').data('is_lobbyist', is_lobbyist);
         setState('any-more');
     })
     var switchSection = function($section, noAnimation) {
@@ -154,7 +159,7 @@
             $inactives.find('button,select').attr('disabled', 'disabled');
         }, 0);
     }
-    $('.bio-panel').on('click', '.panel-section-inactive', function(evt) {
+    panelGroup.on('click', '.bio-panel .panel-section-inactive', function(evt) {
         console.log('clicked');
         var $target = $(evt.target);
         var $clicked = $target.hasClass('panel-section-inactive') ? $target : $target.parents('.panel-section-inactive').eq(0);
@@ -163,18 +168,19 @@
     })
 
     // any more panel
-    $('.any-more-panel .yes').on('click', function() {
+    panelGroup.on('click', '.any-more-panel .yes', function() {
         // go back to the name panel, for the second time
         $('.bio-panel').removeClass('first').addClass('not-first');
         setState('bio');
     })
-    $('.any-more-panel .no').on('click', function() {
+    panelGroup.on('click', '.any-more-panel .no', function() {
         // FIXME: save some shit
         var toSave = {
             'url': page.url,
             'site': page.site,
             'people': []
         }
+        // grab all the bio panels
         $('.bio-panel').each(function() {
             var $this = $(this);
             var person = {
@@ -221,7 +227,8 @@
             console.log(selection);
             
             if (currentState == 'bio') {
-                var $section = $('.bio-panel .panel-section-active');
+                // only grab the currently-expanded bio panel
+                var $section = $('.bio-panel .panel-collapse.in .panel-section-active');
 
                 var well = $section.find('.well');
                 well.data('selection', selection);
