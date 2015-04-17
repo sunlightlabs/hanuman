@@ -13,27 +13,32 @@
     // data-tracking objects
     page = null;
 
+    // panels
+    var findPanel, bioPanels, anyMorePanel;
+
+    // general page functions
+    var panelGroup = $('.panel-group');
     var newFirm = function() {
-        resetPageFinder();
         currentSite = SITES[0];
         currentUrl = null;
         visitedNonbio = [];
         visitedBio = [];
 
+        // make all the panels
+        findPanel = new FindPanel();
+        bioPanels = [new BioPanel()];
+        anyMorePanel = new AnyMorePanel();
+
+        panelGroup.html('');
+        _.each([findPanel, bioPanels[0], anyMorePanel], function(panel) {
+            panelGroup.append(panel.render().el);
+            panel.setFirst(true);
+        });
+
+        setState('find');
+
         $('webview').attr('src', currentSite);
         if (page) page.site = currentSite;
-    }
-
-    var resetPageFinder = function() {
-        resetNameFinder();
-        $('.panel').addClass('first').removeClass('not-first');
-        setState('find');
-    }
-
-    var resetNameFinder = function() {
-        _.each(['.name-panel', '.bio-panel'], function(panel) {
-            setWellText($(panel + ' .well'), '');
-        });
     }
 
     var setWellText = function(well, text) {
@@ -45,11 +50,25 @@
         }
     }
 
-    var panelGroup = $('.panel-group');
+    var addBioPanel = function(replaceCurrent) {
+        var newPanel = new BioPanel();
+        if (replaceCurrent) {
+            $('.bio-panel').remove();
+            findPanel.$el.after(newPanel.render().el);
+            bioPanels = [newPanel];
+        } else {
+            bioPanels[bioPanels.length - 1].$el.after(newPanel.render().el);
+            bioPanels.push(newPanel);
+        }
+
+        newPanel.setFirst(replaceCurrent);
+        newPanel.$('.bio-title-name').text("Person #" + bioPanels.length);
+        return newPanel;
+    }
 
     var setState = function(state) {
         // check if the currently expanded thing has the class of the state, and if not, find the first exemplar of that state and expand it
-        var currentExpanded = panelGroup.find('.panel-collapse.in').parents('.panel');
+        var currentExpanded = panelGroup.find('.panel-collapse[aria-expanded=true],.panel-collapse.in').parents('.panel');
         if (!(currentExpanded.length && currentExpanded.hasClass(state + '-panel'))) {
             currentExpanded = $('.' + state + '-panel').eq(0);
             currentExpanded.find('.panel-heading a').click();
@@ -70,6 +89,16 @@
             bioPanel.switchSection(currentExpanded.find('.name-section'), true);
         }
     }
+
+    // utilities
+    var uuid = function() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+            return v.toString(16);
+        });
+    }
+
+    // views
 
     var Panel = Backbone.View.extend({
         events: {
@@ -138,10 +167,16 @@
 
         initialize: function(options) {
             Panel.prototype.initialize.call(this, options);
+            this.options.id = uuid();
             this.bioChunks = [];
         },
 
         nameDone: function() {
+            var name = this.$('.name-section .well .content').html();
+            if (name) {
+                this.$('.bio-title-name').text(name);
+            }
+
             this.switchSection(this.$('.bio-section'));
         },
 
@@ -182,7 +217,7 @@
                 // offset stuff
                 var absOffset = $section.offset();
                 var barOffset = $('.sidebar-top').offset();
-                var chevronOffset = $('.chevron-rel').offset();
+                var chevronOffset = _this.$('.chevron-rel').offset();
 
                 // animate the chevron
                 _this.$('.chevron').animate({'top': absOffset.top - chevronOffset.top + parseInt($section.css('padding-top'))});
@@ -237,9 +272,10 @@
         }, Panel.prototype.events),
 
         pickYes: function() {
-            _.each(bioPanels, function(bioPanel) {
-                bioPanel.setFirst(false);
-            });
+            // we need a new person box
+            var newPanel = addBioPanel(false);
+            
+            newPanel.$('.panel-heading a').click();
             setState('bio');
         },
 
@@ -271,23 +307,11 @@
             // go back to the find panel, for the second time
             findPanel.setFirst(false);
             
-            resetNameFinder();
             setState('find');
             
-            // but when we get to the name panel, it'll be the first time there for this page
-            _.each(bioPanels, function(bioPanel) {
-                bioPanel.setFirst(true);
-            });
+            // replace the bio panel with a new one
+            addBioPanel(true);
         }
-    });
-
-    // make all the panels
-    findPanel = new FindPanel();
-    bioPanels = [new BioPanel()];
-    anyMorePanel = new AnyMorePanel();
-
-    _.each([findPanel, bioPanels[0], anyMorePanel], function(panel) {
-        $('.panel-group').append(panel.render().el);
     });
 
     // set up event handlers for the iframe
