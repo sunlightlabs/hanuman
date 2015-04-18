@@ -1,0 +1,7 @@
+Django==1.8
+djangorestframework==3.1
+-e git+https://github.com/GetBlimp/django-rest-framework-jwt.git@deea4ad#egg=django-rest-framework-jwt
+-e hg+https://bitbucket.org/schinckel/django-postgres@f4e916#egg=django-postgres
+
+psycopg2
+requests
