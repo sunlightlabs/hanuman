@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.db import models, migrations
 import django.core.serializers.json
 import postgres.fields
+import django.contrib.postgres.fields
 from django.conf import settings
 import decimal
 
@@ -54,8 +55,8 @@ class Migration(migrations.Migration):
             name='ViewLog',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('bio_pages', postgres.fields.ArrayField(models.URLField(), size=None, blank=True)),
-                ('non_bio_pages', postgres.fields.ArrayField(models.URLField(), size=None, blank=True)),
+                ('bio_pages', django.contrib.postgres.fields.ArrayField(size=None, base_field=models.URLField(), blank=True)),
+                ('non_bio_pages', django.contrib.postgres.fields.ArrayField(size=None, base_field=models.URLField(), blank=True)),
                 ('firm', models.ForeignKey(to='data_collection.Firm')),
                 ('session', models.ForeignKey(to='data_collection.Session')),
             ],

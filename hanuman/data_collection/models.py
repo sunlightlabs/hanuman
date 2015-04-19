@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-from postgres.fields import JSONField, ArrayField
+from postgres.fields import JSONField
+from django.contrib.postgres.fields import ArrayField
 
 class Session(models.Model):
     user = models.ForeignKey(User)
