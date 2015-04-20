@@ -40,7 +40,7 @@ INSTALLED_APPS = (
 
     'rest_framework',
 
-    'hanuman.data_collection'
+    'data_collection'
 )
 
 MIDDLEWARE_CLASSES = (
