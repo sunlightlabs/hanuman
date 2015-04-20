@@ -7,10 +7,22 @@ class Session(models.Model):
     user = models.ForeignKey(User)
     start = models.DateTimeField(auto_now_add=True)
 
+    @classmethod
+    def current_for_user(kls, user):
+        sess = list(kls.objects.filter(user=user).order_by('-start').limit(0))
+        if not sess:
+            sess = kls(user=user)
+            kls.save()
+        return sess
+
+    class Meta:
+        index_together = (('user', 'start'))
+
 class Firm(models.Model):
     name = models.TextField()
     domain = models.TextField()
     count = models.PositiveIntegerField()
+    external_id = models.TextField(blank=True)
 
 FLAG_TYPE_CHOICES = (
     ('not_firm', 'Organization is not a firm'),
