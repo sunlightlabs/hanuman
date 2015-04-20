@@ -5,3 +5,6 @@ djangorestframework==3.1
 
 psycopg2
 requests
+
+django-bootstrap3
+-e git+https://github.com/apendleton/django-registration2.git@django18#egg=django_registration2-django18
