@@ -18,7 +18,7 @@ FLAG_TYPE_CHOICES = (
     ('tech_problem', 'Technical problem with collection'),
     ('complete', 'Data collection for this organization is complete'),
 )
-class Flags(models.Model):
+class Flag(models.Model):
     firm = models.ForeignKey(Firm)
     session = models.ForeignKey(Session)
     type = models.CharField(choices=FLAG_TYPE_CHOICES, max_length=32)

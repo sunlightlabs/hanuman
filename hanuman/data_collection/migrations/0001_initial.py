@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='Flags',
+            name='Flag',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('type', models.CharField(max_length=32, choices=[(b'not_firm', b'Organization is not a firm'), (b'not_firm_website', b"Not the organization's website"), (b'tech_problem', b'Technical problem with collection'), (b'complete', b'Data collection for this organization is complete')])),
@@ -62,7 +62,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.AddField(
-            model_name='flags',
+            model_name='flag',
             name='session',
             field=models.ForeignKey(to='data_collection.Session'),
         ),
