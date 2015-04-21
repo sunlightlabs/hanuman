@@ -1,4 +1,12 @@
 (function($) {
+    DEFAULT_HOMEPAGE = 'http://localhost:8003/';
+
+    chrome.storage.sync.get({
+        homepage_url: DEFAULT_HOMEPAGE
+    }, function(items) {
+        HOMEPAGE = items.homepage_url;
+    });
+
     SITES = [
         "http://www.pattonboggs.com/"
     ]
@@ -365,6 +373,38 @@
             }
         }
     }, false);
+
+    // have a settings dialog
+    $('button.options-button').on('click', function() {
+        BootstrapDialog.show({
+            title: 'Settings',
+            message: function(dialog) {
+                var $content = $(tim($('.options-dialog-tpl').html()))
+                $content.find('#inputHomepage').val(HOMEPAGE);
+                return $content;
+            },
+            buttons: [
+                {
+                    label: 'Close',
+                    cssClass: 'btn-danger',
+                    action: function(dialog) {
+                        dialog.close();
+                    }
+                },
+                {
+                    label: 'Save',
+                    cssClass: 'btn-success',
+                    action: function(dialog) {
+                        HOMEPAGE = dialog.getModalContent().find('#inputHomepage').val();
+                        chrome.storage.sync.set({
+                            homepage_url: HOMEPAGE
+                        });
+                        dialog.close();
+                    }
+                }
+            ]
+        });
+    });
 
     // start!
     newFirm();

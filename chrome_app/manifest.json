@@ -19,6 +19,7 @@
   "permissions": [
     "https://*/*",
     "http://*/*",
-    "webview"
+    "webview",
+    "storage"
   ]
 }
