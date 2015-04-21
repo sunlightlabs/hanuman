@@ -31,18 +31,19 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
+    'landing_site',
+    'data_collection',
+
+    'rest_framework',
+    'registration',
+    'bootstrap3',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    'rest_framework',
-    'registration',
-    'bootstrap3',
-
-    'data_collection'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -101,6 +102,7 @@ USE_L10N = True
 
 USE_TZ = True
 
+REGISTRATION_MODERATION = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/

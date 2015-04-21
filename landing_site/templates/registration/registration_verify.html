@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-8">
+      <h1>Registration verification</h1>
+
+      <p>
+      {% if profile.verified %}
+        {% if moderation_required %}
+          Your account has been verified. Account moderators have been notified
+          and will begin reviewing your account request.
+        {% else %}
+          Your account has been verified. You can now <a href="{% url 'login' %}">login</a>.
+        {% endif %}
+      {% else %}
+        This account has already been verified or does not exist. No further action is necessary.
+      {% endif %}
+      </p>
+    </div>
+{% endblock %}
