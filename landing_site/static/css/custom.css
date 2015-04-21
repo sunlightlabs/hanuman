@@ -17,8 +17,4 @@ html, body {
 	height: 100px; /* '.push' must be the same height as 'footer' */
 }
 
-#page-footer {
-	border-top: 2px solid rgb(218, 218, 218);
-	background-color: rgb(238, 238, 238);
-	text-shadow: rgb(217, 217, 217) 1px 1px 0px
-}
+
