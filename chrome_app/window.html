@@ -105,6 +105,9 @@
       .options-button {
         float: right;
       }
+      .modal-header {
+        border-radius: 0 !important;
+      }
 
     </style>
   </head>
@@ -242,6 +245,21 @@
         </div>
       </div>
     </script>
+    <script type="text/tim" class="login-dialog-tpl">
+      <div class="row">
+        <div class="col-sm-offset-3 col-sm-10">
+          <p>Not yet registered?
+            <a href="{{homepage}}accounts/register/" target="_blank">Register now!</a></p>
+          <p>Trouble signing in?
+            <a href="{{homepage}}password/reset/" target="_blank">Reset password.</a></p>
+        </div>
+      </div>
+      <form role="form" class="form-horizontal">
+        <div class="form-group"><label class="col-md-3 control-label" for="id_username">Username</label><div class="col-md-9"><input class="form-control" id="id_username" maxlength="254" name="username" placeholder="Username" required="required" title="" type="text"></div></div>
+        <div class="form-group"><label class="col-md-3 control-label" for="id_password">Password</label><div class="col-md-9"><input class="form-control" id="id_password" name="password" placeholder="Password" required="required" title="" type="password"></div></div>
+      </form>
+    </script>
+
     <script src="js/jquery-2.1.3.min.js"></script>
     <script src="js/underscore.min.js"></script>
     <script src="js/tim.min.js"></script>

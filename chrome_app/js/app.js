@@ -1,16 +1,11 @@
 (function($) {
-    DEFAULT_HOMEPAGE = 'http://localhost:8003/';
+    var DEFAULT_HOMEPAGE = 'http://localhost:8003/';
 
-    chrome.storage.sync.get({
-        homepage_url: DEFAULT_HOMEPAGE
-    }, function(items) {
-        HOMEPAGE = items.homepage_url;
-    });
-
-    SITES = [
+    var SITES = [
         "http://www.pattonboggs.com/"
     ]
-    TRUNC_LENGTH = 200;
+    var TRUNC_LENGTH = 200;
+    var HOMEPAGE;
 
     var currentSite = null;
     var currentUrl = null;
@@ -406,7 +401,54 @@
         });
     });
 
-    // start!
-    newFirm();
+    // ... and a login dialog
+    var login = function(callback) {
+        BootstrapDialog.show({
+            title: 'Sign in',
+            closable: false,
+            message: function(dialog) {
+                var $content = $(tim($('.login-dialog-tpl').html(), {'homepage': HOMEPAGE}));
+                // the form is top level, so filter, not find
+                var $form = $content.filter('form');
 
+                // emulate return to submit
+                $form.find('input').on('keypress', function(evt) {
+                    if (evt.keyCode == 13) {
+                        evt.preventDefault();
+                        var $button = dialog.getModalFooter().find('button');
+                        if (!$button.prop('disabled')) {
+                            $button.click();
+                        }
+                    }
+                });
+                return $content;
+            },
+            buttons: [
+                {
+                    label: 'Login',
+                    icon: 'glyphicon glyphicon-star',
+                    cssClass: 'btn-primary',
+                    action: function(dialog) {
+                        var $button = this;
+                        $button.disable();
+                        $button.spin();
+                        setTimeout(function() {
+                            dialog.close();
+                            if (callback) {
+                                callback();
+                            }
+                        }, 2000)
+                    }
+                }
+            ]
+        });
+    }
+
+    // retrieve the settings, force a login, and start
+    chrome.storage.sync.get({
+        homepage_url: DEFAULT_HOMEPAGE
+    }, function(items) {
+        HOMEPAGE = items.homepage_url;
+        login(newFirm);
+    });
 })(jQuery);
