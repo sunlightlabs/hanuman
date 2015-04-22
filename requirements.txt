@@ -1,7 +1,11 @@
 Django==1.8
 djangorestframework==3.1
 -e git+https://github.com/GetBlimp/django-rest-framework-jwt.git@deea4ad#egg=django-rest-framework-jwt
+
+# this one is for the model field
 -e hg+https://bitbucket.org/schinckel/django-postgres@f4e916#egg=django-postgres
+# this one is for the form field
+django-jsonfield==0.9.13
 
 psycopg2
 requests
