@@ -1,9 +1,6 @@
 (function($) {
     var DEFAULT_HOMEPAGE = 'http://localhost:8003/';
 
-    var SITES = [
-        "http://www.pattonboggs.com/"
-    ]
     var TRUNC_LENGTH = 200;
     var HOMEPAGE;
 
@@ -22,26 +19,29 @@
     // general page functions
     var panelGroup = $('.panel-group');
     var newFirm = function() {
-        currentSite = SITES[0];
-        currentUrl = null;
-        visitedNonbio = [];
-        visitedBio = [];
+        var firm = new Firm({id: 'next'});
+        firm.fetch().done(function() {
+            currentSite = 'http://' + firm.get('domain') + '/';
+            currentUrl = null;
+            visitedNonbio = [];
+            visitedBio = [];
 
-        // make all the panels
-        findPanel = new FindPanel();
-        bioPanels = [new BioPanel()];
-        anyMorePanel = new AnyMorePanel();
+            // make all the panels
+            findPanel = new FindPanel();
+            bioPanels = [new BioPanel()];
+            anyMorePanel = new AnyMorePanel();
 
-        panelGroup.html('');
-        _.each([findPanel, bioPanels[0], anyMorePanel], function(panel) {
-            panelGroup.append(panel.render().el);
-            panel.setFirst(true);
+            panelGroup.html('');
+            _.each([findPanel, bioPanels[0], anyMorePanel], function(panel) {
+                panelGroup.append(panel.render().el);
+                panel.setFirst(true);
+            });
+
+            setState('find');
+
+            $('webview').attr('src', currentSite);
+            if (page) page.site = currentSite;
         });
-
-        setState('find');
-
-        $('webview').attr('src', currentSite);
-        if (page) page.site = currentSite;
     }
 
     var setWellText = function(well, text) {
@@ -466,7 +466,7 @@
     var refreshInterval;
     var login = function(username, password) {
         var out = $.Deferred();
-        $.post(HOMEPAGE + 'api/1.0/token-auth/', {'username': username, 'password': password}).success(function(data) {
+        $.post(HOMEPAGE + 'api/1.0/token-auth/', {'username': username, 'password': password}).done(function(data) {
             JWT_TOKEN = data.token;
 
             // refresh the token once per minute
@@ -484,7 +484,7 @@
         return out;
     }
     var refreshToken = function() {
-        $.post(HOMEPAGE + 'api/1.0/token-refresh/', {'token': JWT_TOKEN}).success(function(data) {
+        $.post(HOMEPAGE + 'api/1.0/token-refresh/', {'token': JWT_TOKEN}).done(function(data) {
             JWT_TOKEN = data.token;
         }).fail(function() {
             // couldn't get a new token, so force a login again
@@ -496,6 +496,7 @@
     var _sync = Backbone.sync;
     Backbone.sync = function(method, model, options) {
         var _this = this, _options = options, _model = model;
+        var dfd = $.Deferred();
         options.beforeSend = function(xhr) {
             xhr.setRequestHeader('Authorization' , "JWT " + JWT_TOKEN);
         }
@@ -506,7 +507,7 @@
                 clearInterval(refreshInterval);
                 requireLogin(function() {
                     delete _options.xhr;
-                    Backbone.sync(method, _model, _options);
+                    _sync.call(_this, method, _model, _options).done(function() { dfd.done.apply(dfd, arguments); });
                 });
             } else {
                 // something else is going on
@@ -514,10 +515,13 @@
                     title: 'Save error',
                     message: "A problem occurred saving your data.",
                     buttons: [
-                        {label: 'Give up', cssClass: 'btn-danger', action: function(dialog) { dialog.close(); }},
+                        {label: 'Give up', cssClass: 'btn-danger', action: function(dialog) {
+                            dialog.close();
+                            xhr.fail(function() { dfd.reject.apply(dfd, arguments); });
+                        }},
                         {label: 'Try again', cssClass: 'btn-success', action: function(dialog) {
                             delete _options.xhr;
-                            Backbone.sync(method, _model, _options); dialog.close();
+                            _sync(_this, method, _model, _options).done(function() { dfd.resolve.apply(dfd, arguments); }); dialog.close();
                         }}
                     ]
                 });
@@ -526,13 +530,14 @@
         }
 
         // call original sync
-        _sync.call(this, method, model, options);
+        _sync.call(this, method, model, options).done(function() { dfd.resolve.apply(dfd, arguments); });
+        return dfd.promise();
     }
 
     // Models
     var Firm = Backbone.Model.extend({
         url: function() {
-            return HOMEPAGE + 'api/1.0/firms/' + this.id + '/';
+            return HOMEPAGE + 'api/1.0/firms/' + (this.isNew() ? '' : this.id + '/');
         }
     })
 
