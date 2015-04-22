@@ -461,7 +461,7 @@
         });
     }
 
-    // models and model-saving stuff
+    // authentication stuff
     var JWT_TOKEN;
     var refreshInterval;
     var login = function(username, password) {
@@ -493,6 +493,50 @@
         })
     }
 
+    var _sync = Backbone.sync;
+    Backbone.sync = function(method, model, options) {
+        var _this = this, _options = options, _model = model;
+        options.beforeSend = function(xhr) {
+            xhr.setRequestHeader('Authorization' , "JWT " + JWT_TOKEN);
+        }
+
+        options.error = function(xhr, statusText, thrown) {
+            if (xhr.status == 403) {
+                // we're not logged in?
+                clearInterval(refreshInterval);
+                requireLogin(function() {
+                    delete _options.xhr;
+                    Backbone.sync(method, _model, _options);
+                });
+            } else {
+                // something else is going on
+                BootstrapDialog.show({
+                    title: 'Save error',
+                    message: "A problem occurred saving your data.",
+                    buttons: [
+                        {label: 'Give up', cssClass: 'btn-danger', action: function(dialog) { dialog.close(); }},
+                        {label: 'Try again', cssClass: 'btn-success', action: function(dialog) {
+                            delete _options.xhr;
+                            Backbone.sync(method, _model, _options); dialog.close();
+                        }}
+                    ]
+                });
+
+            }
+        }
+
+        // call original sync
+        _sync.call(this, method, model, options);
+    }
+
+    // Models
+    var Firm = Backbone.Model.extend({
+        url: function() {
+            return HOMEPAGE + 'api/1.0/firms/' + this.id + '/';
+        }
+    })
+
+    // READY, SET, GO!
     // retrieve the settings, force a login, and start
     chrome.storage.sync.get({
         homepage_url: DEFAULT_HOMEPAGE
