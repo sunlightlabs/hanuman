@@ -36,15 +36,18 @@ class Flag(models.Model):
     type = models.CharField(choices=FLAG_TYPE_CHOICES, max_length=32)
     resolved = models.BooleanField(default=False)
     notes = models.TextField(blank=True)
+    created = models.DateTimeField(auto_now_add=True)
 
 class BioPage(models.Model):
     firm = models.ForeignKey(Firm)
     session = models.ForeignKey(Session)
     url = models.URLField()
     data = JSONField()
+    created = models.DateTimeField(auto_now_add=True)
 
 class ViewLog(models.Model):
     firm = models.ForeignKey(Firm)
     session = models.ForeignKey(Session)
     bio_pages = ArrayField(models.URLField(), blank=True)
     non_bio_pages = ArrayField(models.URLField(), blank=True)
+    created = models.DateTimeField(auto_now_add=True)
