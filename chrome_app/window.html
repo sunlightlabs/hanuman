@@ -247,11 +247,16 @@
     </script>
     <script type="text/tim" class="login-dialog-tpl">
       <div class="row">
-        <div class="col-sm-offset-3 col-sm-10">
+        <div class="col-sm-offset-3 col-sm-9">
           <p>Not yet registered?
             <a href="{{homepage}}accounts/register/" target="_blank">Register now!</a></p>
           <p>Trouble signing in?
             <a href="{{homepage}}password/reset/" target="_blank">Reset password.</a></p>
+        </div>
+      </div>
+      <div class="row login-error" style="display: none;">
+        <div class="alert alert-danger col-sm-offset-3 col-sm-9">
+          <p><strong></strong></p>
         </div>
       </div>
       <form role="form" class="form-horizontal">

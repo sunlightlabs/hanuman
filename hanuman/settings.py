@@ -121,6 +121,10 @@ REST_FRAMEWORK = {
     ),
 }
 
+JWT_AUTH = {
+    'JWT_ALLOW_REFRESH': True
+}
+
 
 try:
     from local_settings import *

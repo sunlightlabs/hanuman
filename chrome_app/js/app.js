@@ -402,7 +402,7 @@
     });
 
     // ... and a login dialog
-    var login = function(callback) {
+    var requireLogin = function(callback) {
         BootstrapDialog.show({
             title: 'Sign in',
             closable: false,
@@ -432,16 +432,65 @@
                         var $button = this;
                         $button.disable();
                         $button.spin();
-                        setTimeout(function() {
+
+                        // do the actual logging in
+                        var $content = dialog.getModalContent();
+                        
+                        var username = $content.find('#id_username').val(),
+                            password = $content.find('#id_password').val();
+
+                        login(username, password).done(function() {
                             dialog.close();
                             if (callback) {
                                 callback();
                             }
-                        }, 2000)
+                        }).fail(function(reason) {
+                            var errRow = $content.find('.login-error');
+                            errRow.find('strong').text(reason == "bad_login" ? "Login failed. Try again...": "There was a problem communicating with the server. Please try again.");
+                            errRow.slideDown('fast');
+
+                            $button.enable();
+                            $button.stopSpin();
+                        });
                     }
                 }
-            ]
+            ],
+            onshown: function(dialog) {
+                dialog.getModalContent().find('#id_username').focus();
+            }
         });
+    }
+
+    // models and model-saving stuff
+    var JWT_TOKEN;
+    var refreshInterval;
+    var login = function(username, password) {
+        var out = $.Deferred();
+        $.post(HOMEPAGE + 'api/1.0/token-auth/', {'username': username, 'password': password}).success(function(data) {
+            JWT_TOKEN = data.token;
+
+            // refresh the token once per minute
+            clearInterval(refreshInterval);
+            refreshInterval = setInterval(refreshToken, 60000);
+            out.resolve();
+        }).fail(function(xhr) {
+            if (xhr.status == 400) {
+                // bad username or password
+                out.reject('bad_login');
+            } else {
+                out.reject('other');
+            }
+        });
+        return out;
+    }
+    var refreshToken = function() {
+        $.post(HOMEPAGE + 'api/1.0/token-refresh/', {'token': JWT_TOKEN}).success(function(data) {
+            JWT_TOKEN = data.token;
+        }).fail(function() {
+            // couldn't get a new token, so force a login again
+            clearInterval(refreshInterval);
+            requireLogin();
+        })
     }
 
     // retrieve the settings, force a login, and start
@@ -449,6 +498,6 @@
         homepage_url: DEFAULT_HOMEPAGE
     }, function(items) {
         HOMEPAGE = items.homepage_url;
-        login(newFirm);
+        requireLogin(newFirm);
     });
 })(jQuery);
