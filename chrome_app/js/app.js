@@ -21,7 +21,7 @@
     var newFirm = function() {
         var firm = new Firm({id: 'next'});
         firm.fetch().done(function() {
-            currentSite = 'http://' + firm.get('domain') + '/';
+            currentSite = firm;
             currentUrl = null;
             visitedNonbio = [];
             visitedBio = [];
@@ -39,7 +39,7 @@
 
             setState('find');
 
-            $('webview').attr('src', currentSite);
+            $('webview').attr('src', currentSite.siteUrl());
             if (page) page.site = currentSite;
         });
     }
@@ -275,6 +275,21 @@
             'click .no': 'pickNo'
         }, Panel.prototype.events),
 
+        render: function() {
+            Panel.prototype.render.call(this);
+            
+            // hack to poach Bootstrap Dialog's spinner
+            this._fakeDialog = new BootstrapDialog();
+            
+            this.$yesButton = this.$('button.yes');
+            this._fakeDialog.enhanceButton(this.$yesButton);
+
+            this.$noButton = this.$('button.no');
+            this._fakeDialog.enhanceButton(this.$noButton);
+
+            return this;
+        },
+
         pickYes: function() {
             // we need a new person box
             var newPanel = addBioPanel(false);
@@ -284,11 +299,10 @@
         },
 
         pickNo: function() {
-            // FIXME: save some shit
             var toSave = {
                 'url': page.url,
-                'site': page.site,
-                'people': []
+                'firm': page.site.id,
+                'data': {'people': []}
             }
             // grab all the bio panels
             _.each(bioPanels, function(bioPanel) {
@@ -304,17 +318,27 @@
                     person.bio.push(selection);
                 })
 
-                toSave.people.push(person);
+                toSave.data.people.push(person);
             })
-            console.log('would save', toSave);
 
-            // go back to the find panel, for the second time
-            findPanel.setFirst(false);
-            
-            setState('find');
-            
-            // replace the bio panel with a new one
-            addBioPanel(true);
+            // now save it all
+            var bioPage = new BioPage(toSave);
+            this.$yesButton.disable();
+            this.$noButton.spin().disable();
+
+            var _this = this;
+            bioPage.save().then(function() {
+                _this.$yesButton.enable();
+                _this.$noButton.stopSpin().enable();
+
+                // go back to the find panel, for the not-first time
+                findPanel.setFirst(false);
+                
+                setState('find');
+                
+                // replace the bio panel with a new one
+                addBioPanel(true);
+            })
         }
     });
 
@@ -495,7 +519,7 @@
 
     var _sync = Backbone.sync;
     Backbone.sync = function(method, model, options) {
-        var _this = this, _options = options, _model = model;
+        var _this = this, _model = model;
         var dfd = $.Deferred();
         options.beforeSend = function(xhr) {
             xhr.setRequestHeader('Authorization' , "JWT " + JWT_TOKEN);
@@ -506,22 +530,20 @@
                 // we're not logged in?
                 clearInterval(refreshInterval);
                 requireLogin(function() {
-                    delete _options.xhr;
-                    _sync.call(_this, method, _model, _options).done(function() { dfd.done.apply(dfd, arguments); });
+                    _sync.call(_this, method, _model, _.clone(options)).done(function() { dfd.done.apply(dfd, arguments); });
                 });
             } else {
                 // something else is going on
                 BootstrapDialog.show({
                     title: 'Save error',
-                    message: "A problem occurred saving your data.",
+                    message: "There was a problem communicating with the server.",
                     buttons: [
                         {label: 'Give up', cssClass: 'btn-danger', action: function(dialog) {
                             dialog.close();
                             xhr.fail(function() { dfd.reject.apply(dfd, arguments); });
                         }},
                         {label: 'Try again', cssClass: 'btn-success', action: function(dialog) {
-                            delete _options.xhr;
-                            _sync(_this, method, _model, _options).done(function() { dfd.resolve.apply(dfd, arguments); }); dialog.close();
+                            _sync.call(_this, method, _model, _.clone(options)).done(function() { dfd.resolve.apply(dfd, arguments); }); dialog.close();
                         }}
                     ]
                 });
@@ -530,7 +552,7 @@
         }
 
         // call original sync
-        _sync.call(this, method, model, options).done(function() { dfd.resolve.apply(dfd, arguments); });
+        _sync.call(this, method, model, _.clone(options)).done(function() { dfd.resolve.apply(dfd, arguments); });
         return dfd.promise();
     }
 
@@ -538,8 +560,19 @@
     var Firm = Backbone.Model.extend({
         url: function() {
             return HOMEPAGE + 'api/1.0/firms/' + (this.isNew() ? '' : this.id + '/');
+        },
+        siteUrl: function() {
+            return 'http://' + this.get('domain') + '/';
         }
     })
+    window.Firm = Firm;
+    var BioPage = Backbone.Model.extend({
+        url: function() {
+            return HOMEPAGE + 'api/1.0/bio-pages/' + (this.isNew() ? '' : this.id + '/');
+        }
+    })
+
+    
 
     // READY, SET, GO!
     // retrieve the settings, force a login, and start

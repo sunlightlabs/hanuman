@@ -20,3 +20,7 @@ class NextFirmDetail(generics.RetrieveAPIView):
         if not firm:
             raise Http404
         return firm[0]
+
+class BioPageCreate(generics.CreateAPIView):
+    queryset = BioPage.objects.all()
+    serializer_class = BioPageSerializer

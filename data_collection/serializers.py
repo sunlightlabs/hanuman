@@ -13,6 +13,14 @@ class CurrentSessionDefault(object):
     def __repr__(self):
         return unicode_to_repr('%s()' % self.__class__.__name__)
 
+# make the JSON fields work right
+class JSONSerializerField(serializers.Field):
+    """ Serializer for JSONField -- required to make field writable"""
+    def to_internal_value(self, data):
+        return data
+    def to_representation(self, value):
+        return value
+
 # serializers for the relevant the models
 class FirmSerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,15 +28,19 @@ class FirmSerializer(serializers.ModelSerializer):
 
 class BioPageSerializer(serializers.ModelSerializer):
     session = serializers.HiddenField(default=CurrentSessionDefault())
+    data = JSONSerializerField()
+    firm = serializers.PrimaryKeyRelatedField(queryset=Firm.objects.all())
     class Meta:
         model = BioPage
 
 class ViewLogSerializer(serializers.ModelSerializer):
     session = serializers.HiddenField(default=CurrentSessionDefault())
+    firm = serializers.PrimaryKeyRelatedField(queryset=Firm.objects.all())
     class Meta:
         model = ViewLog
 
 class FlagSerializer(serializers.ModelSerializer):
     session = serializers.HiddenField(default=CurrentSessionDefault())
+    firm = serializers.PrimaryKeyRelatedField(queryset=Firm.objects.all())
     class Meta:
         model = Flag

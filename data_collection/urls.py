@@ -7,6 +7,8 @@ urlpatterns = [
     url(r'^firms/(?P<pk>[0-9]+)/$', views.FirmDetail.as_view()),
     url(r'^firms/next/$', views.NextFirmDetail.as_view()),
 
+    url(r'^bio-pages/$', views.BioPageCreate.as_view()),
+
     url(r'^token-auth/', 'rest_framework_jwt.views.obtain_jwt_token'),
     url(r'^token-refresh/', 'rest_framework_jwt.views.refresh_jwt_token'),
 ]

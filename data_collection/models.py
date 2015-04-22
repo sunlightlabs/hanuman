@@ -9,10 +9,12 @@ class Session(models.Model):
 
     @classmethod
     def current_for_user(kls, user):
-        sess = list(kls.objects.filter(user=user).order_by('-start').limit(0))
-        if not sess:
+        sessions = list(kls.objects.filter(user=user).order_by('-start')[:1])
+        if sessions:
+            sess = sessions[0]
+        else:
             sess = kls(user=user)
-            kls.save()
+            sess.save()
         return sess
 
     class Meta:
