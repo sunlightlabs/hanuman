@@ -116,6 +116,34 @@
         animation: spin 2s infinite linear;
       }
 
+      .view-list {
+        background: #485563;
+        height: 250px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        width: 100%;
+      }
+      .view-list .list-group-item {
+        background: #2b3e50;
+        margin-bottom: 1px;
+        cursor: move;
+        width: 100%;
+      }
+      .view-list .sortable-ghost {
+        opacity: 0.5;
+      }
+      .view-list .page-name {
+        font-size: 110%;
+      }
+      .view-list .page-url {
+        font-size: 90%;
+        opacity: 0.8;
+        width: 250px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
     </style>
   </head>
   <body>
@@ -278,6 +306,7 @@
     <script src="js/backbone.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/bootstrap-dialog.min.js"></script>
+    <script src="js/jquery.fn.sortable.min.js"></script>
 
     <script src="js/app.js"></script>
   </body>

@@ -102,7 +102,7 @@
         });
     }
 
-    // views
+    // ** Views **
 
     var Panel = Backbone.View.extend({
         events: {
@@ -342,7 +342,7 @@
         }
     });
 
-    // set up event handlers for the iframe
+    // ** Iframe stuff **
     var webview = $('webview');
     webview[0].addEventListener('consolemessage', function(e) {
         console.log('webview:', e.message);
@@ -393,7 +393,8 @@
         }
     }, false);
 
-    // have a settings dialog
+    // ** Dialogs **
+    // settings dialog
     $('button.options-button').on('click', function() {
         BootstrapDialog.show({
             title: 'Settings',
@@ -425,7 +426,7 @@
         });
     });
 
-    // ... and a login dialog
+    // login dialog
     var requireLogin = function(callback) {
         BootstrapDialog.show({
             title: 'Sign in',
@@ -485,7 +486,75 @@
         });
     }
 
-    // authentication stuff
+    // view log dialog
+    var confirmViewLog = function(callback) {
+        BootstrapDialog.show({
+            size: BootstrapDialog.SIZE_WIDE,
+            title: 'Pages viewed',
+            message: function(dialog) {
+                bio = [
+                    {
+                        'name': 'Page 1',
+                        'url': 'http://www.google.com'
+                    },
+                    {
+                        'name': 'Page 2',
+                        'url': 'http://www.google.com'
+                    },
+                    {
+                        'name': 'Page 3',
+                        'url': 'http://www.google.com'
+                    }
+                ]
+                nonbio = [
+                    {
+                        'name': 'Page 4',
+                        'url': 'http://www.google.com'
+                    },
+                    {
+                        'name': 'Page 5',
+                        'url': 'http://www.google.com'
+                    },
+                    {
+                        'name': 'Page 6',
+                        'url': 'http://www.google.com'
+                    }
+                ]
+
+                var $content = $("<div>").text("Move this shit back and forth")
+                var $lists = $("<div>").addClass('row').appendTo($content);
+                _.each([bio, nonbio], function(list) {
+                    var $listC = $("<div>").addClass('col-sm-6').html("<h4>Bio pages</h4>");
+                    var $list = $("<ul>").addClass('list-group').addClass('view-list').appendTo($listC);
+                    _.each(list, function(item) {
+                        var $item = $("<li>").addClass('list-group-item').html("<div class='page-name'>" + item.name + "</div><div class='page-url'>" + item.url + "</div>");
+                        $list.append($item);
+                    })
+                    $lists.append($listC);
+                    $list.sortable({
+                        sort: false,
+                        group: {put: true, pull: true, name: 'pages'},
+                        animation: 150
+                    });
+                })
+
+                return $content;
+            },
+            buttons: [
+                {label: "Go back", cssClass: 'btn-warning', action: function(dialog) {
+                    dialog.close();
+                }},
+                {label: 'Save and continue', cssClass: 'btn-success', action: function(dialog) {
+                    dialog.close();
+                    if (callback) {
+                        callback();
+                    }
+                }}
+            ]
+        })
+    }
+
+    // ** Auth stuff **
     var JWT_TOKEN;
     var refreshInterval;
     var login = function(username, password) {
@@ -556,7 +625,7 @@
         return dfd.promise();
     }
 
-    // Models
+    // ** Models **
     var Firm = Backbone.Model.extend({
         url: function() {
             return HOMEPAGE + 'api/1.0/firms/' + (this.isNew() ? '' : this.id + '/');
@@ -581,5 +650,6 @@
     }, function(items) {
         HOMEPAGE = items.homepage_url;
         requireLogin(newFirm);
+        // confirmViewLog(function() { requireLogin(newFirm); });
     });
 })(jQuery);
