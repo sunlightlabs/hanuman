@@ -32,6 +32,13 @@ class BioPageForm(forms.ModelForm):
 class BioPageAdmin(admin.ModelAdmin):
     form = BioPageForm
 
+class ViewLogForm(forms.ModelForm):
+    bio_pages = JSONFormField(widget=AceJSONWidget())
+    non_bio_pages = JSONFormField(widget=AceJSONWidget())
+    class Meta:
+        model = ViewLog
+        exclude = ()
+
 @admin.register(ViewLog)
 class ViewLogAdmin(admin.ModelAdmin):
-    pass
+    form = ViewLogForm

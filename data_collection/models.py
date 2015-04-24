@@ -63,3 +63,6 @@ class ViewLog(models.Model):
     bio_pages = ArrayField(models.URLField(), blank=True)
     non_bio_pages = ArrayField(models.URLField(), blank=True)
     created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return "%s from %s" % (self.firm.domain, self.created.isoformat())
