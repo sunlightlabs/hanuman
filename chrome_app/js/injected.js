@@ -12,7 +12,7 @@
         if (event.data == "hanuman_hello" && event.origin.match(/^chrome-extension:/)) {
             // this is the hello message from the parent window; grab its source to be able to communicate backwards
             parent = event.source;
-            parentPostMessage('setUrl', document.location.href);
+            parentPostMessage('setPageInfo', {'url': document.location.href, 'title': document.title});
         }
     }, false);
 

@@ -7,8 +7,9 @@
     var currentSite = null;
     var currentUrl = null;
     var currentState = null;
-    var visitedNonbio = [];
+    var visited = [];
     var visitedBio = [];
+    var pageTitles = {};
 
     // data-tracking objects
     page = null;
@@ -23,8 +24,9 @@
         firm.fetch().done(function() {
             currentSite = firm;
             currentUrl = null;
-            visitedNonbio = [];
+            visited = [];
             visitedBio = [];
+            pageTitles = {};
 
             // make all the panels
             findPanel = new FindPanel();
@@ -135,18 +137,28 @@
 
         events: _.extend({
             'click .quit': 'quit',
-            'click .new-firm': newFirm,
+            'click .new-firm': 'newFirm',
             'click .found-one': 'foundOne'
         }, Panel.prototype.events),
 
         quit: function() {
-            window.close();
+            if (visitedBio.length) {
+                confirmViewLog(function() { window.close(); })
+            } else {
+                window.close();
+            }
+        },
+
+        newFirm: function() {
+            if (visitedBio.length) {
+                confirmViewLog(newFirm)
+            } else {
+                newFirm();
+            }
         },
 
         foundOne: function() {
-            // remove the current URL from the non-bio list if it's in there
-            visitedNonbio = _.reject(visitedNonbio, function(el) { return el == currentUrl });
-            // and add it to the bio list
+            // add the URL to the bio list
             visitedBio.push(currentUrl);
 
             // go to the next panel for the first time
@@ -357,9 +369,10 @@
     });
 
     var messageHandlers = {
-        'setUrl': function(url) {
-            currentUrl = url;
-            visitedNonbio.push(url);
+        'setPageInfo': function(info) {
+            currentUrl = info.url;
+            visited.push(currentUrl);
+            pageTitles[currentUrl] = info.title;
         },
         'updateSelection': function(selection) {
             console.log(selection);
@@ -492,41 +505,23 @@
             size: BootstrapDialog.SIZE_WIDE,
             title: 'Pages viewed',
             message: function(dialog) {
-                bio = [
-                    {
-                        'name': 'Page 1',
-                        'url': 'http://www.google.com'
-                    },
-                    {
-                        'name': 'Page 2',
-                        'url': 'http://www.google.com'
-                    },
-                    {
-                        'name': 'Page 3',
-                        'url': 'http://www.google.com'
-                    }
-                ]
-                nonbio = [
-                    {
-                        'name': 'Page 4',
-                        'url': 'http://www.google.com'
-                    },
-                    {
-                        'name': 'Page 5',
-                        'url': 'http://www.google.com'
-                    },
-                    {
-                        'name': 'Page 6',
-                        'url': 'http://www.google.com'
-                    }
-                ]
+                var bioSet = new Set(visitedBio);
+                var groups = {}
+                _.each([['bio', visitedBio], ['nonbio', _.reject(visited, function(el) { return bioSet.has(el); })]], function(item) {
+                    groups[item[0]] = _.map(_.uniq(item[1]), function(url) {
+                        return {'name': pageTitles[url], 'url': url};
+                    })
+                })
 
-                var $content = $("<div>").text("Move this shit back and forth")
+                var $content = $("<div>").text("As you've been exploring this firm's site, we've kept track of which pages you marked as bio pages and which you didn't. " + 
+                        "Please review how you've classified these pages below to make sure we got it right. You can drag pages from one column to the other if they're in " + 
+                        "the wrong one. When you're ready, hit 'Save,' below, or, if you want to visit either some more bio or non-bio pages to help us better learn to " + 
+                        "tell the difference, hit 'go back' and browse around some more.");
                 var $lists = $("<div>").addClass('row').appendTo($content);
-                _.each([bio, nonbio], function(list) {
-                    var $listC = $("<div>").addClass('col-sm-6').html("<h4>Bio pages</h4>");
+                _.each(['bio', 'nonbio'], function(type) {
+                    var $listC = $("<div>").addClass('col-sm-6').html("<h4>" + {bio: "Bio", nonbio: 'Non-bio'}[type] + " pages</h4>");
                     var $list = $("<ul>").addClass('list-group').addClass('view-list').appendTo($listC);
-                    _.each(list, function(item) {
+                    _.each(groups[type], function(item) {
                         var $item = $("<li>").addClass('list-group-item').html("<div class='page-name'>" + item.name + "</div><div class='page-url'>" + item.url + "</div>");
                         $list.append($item);
                     })
