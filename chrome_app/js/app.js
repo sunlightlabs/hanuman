@@ -572,7 +572,7 @@
     var refreshInterval;
     var login = function(username, password) {
         var out = $.Deferred();
-        $.post(HOMEPAGE + 'api/1.0/token-auth/', {'username': username, 'password': password}).done(function(data) {
+        $.post(HOMEPAGE + 'api/1.0/token-auth-ns/', {'username': username, 'password': password}).done(function(data) {
             JWT_TOKEN = data.token;
 
             // refresh the token once per minute

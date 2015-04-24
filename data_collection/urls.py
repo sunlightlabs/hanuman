@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^view-logs/$', views.ViewLogCreate.as_view()),
 
     url(r'^token-auth/', 'rest_framework_jwt.views.obtain_jwt_token'),
+    url(r'^token-auth-ns/', views.ObtainJSONWebTokenNS.as_view()),
     url(r'^token-refresh/', 'rest_framework_jwt.views.refresh_jwt_token'),
 ]
 

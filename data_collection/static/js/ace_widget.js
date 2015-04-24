@@ -4,7 +4,7 @@
             var $area = $(this);
             var $editor = $("<div>");
             $editor.attr('id', 'ace_' + $area.attr('id'));
-            $editor.css({'width': '100%', 'height': '400px'});
+            $editor.css({'width': '100%', 'height': '400px', 'min-width': '300px'});
 
             $area.after($editor);
             $area.hide();
