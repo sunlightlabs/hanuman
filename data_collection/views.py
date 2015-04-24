@@ -24,3 +24,7 @@ class NextFirmDetail(generics.RetrieveAPIView):
 class BioPageCreate(generics.CreateAPIView):
     queryset = BioPage.objects.all()
     serializer_class = BioPageSerializer
+
+class ViewLogCreate(generics.CreateAPIView):
+    queryset = ViewLog.objects.all()
+    serializer_class = ViewLogSerializer

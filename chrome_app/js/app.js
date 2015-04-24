@@ -520,9 +520,10 @@
                 var $lists = $("<div>").addClass('row').appendTo($content);
                 _.each(['bio', 'nonbio'], function(type) {
                     var $listC = $("<div>").addClass('col-sm-6').html("<h4>" + {bio: "Bio", nonbio: 'Non-bio'}[type] + " pages</h4>");
-                    var $list = $("<ul>").addClass('list-group').addClass('view-list').appendTo($listC);
+                    var $list = $("<ul>").addClass('list-group').addClass('view-list').addClass(type + '-list').appendTo($listC);
                     _.each(groups[type], function(item) {
                         var $item = $("<li>").addClass('list-group-item').html("<div class='page-name'>" + item.name + "</div><div class='page-url'>" + item.url + "</div>");
+                        $item.attr('data-url', item.url);
                         $list.append($item);
                     })
                     $lists.append($listC);
@@ -540,10 +541,27 @@
                     dialog.close();
                 }},
                 {label: 'Save and continue', cssClass: 'btn-success', action: function(dialog) {
-                    dialog.close();
-                    if (callback) {
-                        callback();
-                    }
+                    var $content = dialog.getModalContent();
+
+                    // now save it all
+                    var viewLog = new ViewLog({
+                        'firm': currentSite.id,
+                        'bio_pages': _.map($content.find('.bio-list li'), function(el) { return $(el).attr('data-url'); }),
+                        'non_bio_pages': _.map($content.find('.nonbio-list li'), function(el) { return $(el).attr('data-url'); }),
+                    });
+                    dialog.enableButtons(false);
+                    this.spin();
+
+                    var _this = this;
+                    viewLog.save().then(function() {
+                        dialog.enableButtons(true);
+                        _this.stopSpin();
+
+                        dialog.close();
+                        if (callback) {
+                            callback();
+                        }  
+                    })
                 }}
             ]
         })
@@ -629,10 +647,14 @@
             return 'http://' + this.get('domain') + '/';
         }
     })
-    window.Firm = Firm;
     var BioPage = Backbone.Model.extend({
         url: function() {
             return HOMEPAGE + 'api/1.0/bio-pages/' + (this.isNew() ? '' : this.id + '/');
+        }
+    })
+    var ViewLog = Backbone.Model.extend({
+        url: function() {
+            return HOMEPAGE + 'api/1.0/view-logs/' + (this.isNew() ? '' : this.id + '/');
         }
     })
 

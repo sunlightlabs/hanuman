@@ -36,6 +36,8 @@ class BioPageSerializer(serializers.ModelSerializer):
 class ViewLogSerializer(serializers.ModelSerializer):
     session = serializers.HiddenField(default=CurrentSessionDefault())
     firm = serializers.PrimaryKeyRelatedField(queryset=Firm.objects.all())
+    bio_pages = JSONSerializerField()
+    non_bio_pages = JSONSerializerField()
     class Meta:
         model = ViewLog
 
