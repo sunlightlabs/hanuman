@@ -46,6 +46,18 @@
         });
     }
 
+    var leaveFirm = function(callback) {
+        if (!callback) callback = function() {};
+
+        if (visitedBio.length) {
+            confirmViewLog(function() {
+                chooseFlag(callback);
+            })
+        } else {
+            chooseFlag(callback);
+        }
+    }
+
     var setWellText = function(well, text) {
         well.find('.content').html(text.replace("\n", "<br />"));
         if (text == "") {
@@ -142,19 +154,11 @@
         }, Panel.prototype.events),
 
         quit: function() {
-            if (visitedBio.length) {
-                confirmViewLog(function() { window.close(); })
-            } else {
-                window.close();
-            }
+            leaveFirm(function() { window.close(); });
         },
 
         newFirm: function() {
-            if (visitedBio.length) {
-                confirmViewLog(newFirm)
-            } else {
-                newFirm();
-            }
+            leaveFirm(newFirm);
         },
 
         foundOne: function() {
@@ -567,6 +571,54 @@
         })
     }
 
+    // flag selection dialog
+    var chooseFlag = function(callback) {
+        BootstrapDialog.show({
+            title: 'All done with this site?',
+            closable: false,
+            size: BootstrapDialog.SIZE_WIDE,
+            message: function(dialog) {
+                var $content = $(tim($('.flag-dialog-tpl').html()));
+                return $content;
+            },
+            buttons: [
+                {
+                    label: 'Save',
+                    cssClass: 'btn-primary',
+                    action: function(dialog) {
+                        var $button = this;
+                        $button.disable();
+                        $button.spin();
+
+                        // grab the radio contents
+                        var $content = dialog.getModalContent();
+                        
+                        var reason = $content.find('input[type=radio]:checked').val();
+                        var notes = $content.find('input[type=text]').val();
+
+                        dialog.close();
+
+                        if (reason == "tired") {
+                            // we don't submit a flag for this
+                            if (callback) callback();
+                        } else {
+                            var flag = new Flag({
+                                type: reason,
+                                firm: currentSite.id
+                            });
+                            if (reason == "other") {
+                                flag.set('notes', notes);
+                            }
+                            flag.save().then(function() {
+                                if (callback) callback();
+                            })
+                        }
+                    }
+                }
+            ]
+        });
+    }
+
     // ** Auth stuff **
     var JWT_TOKEN;
     var refreshInterval;
@@ -657,6 +709,11 @@
             return HOMEPAGE + 'api/1.0/view-logs/' + (this.isNew() ? '' : this.id + '/');
         }
     })
+    var Flag = Backbone.Model.extend({
+        url: function() {
+            return HOMEPAGE + 'api/1.0/flags/' + (this.isNew() ? '' : this.id + '/');
+        }
+    })
 
     
 
@@ -667,6 +724,5 @@
     }, function(items) {
         HOMEPAGE = items.homepage_url;
         requireLogin(newFirm);
-        // confirmViewLog(function() { requireLogin(newFirm); });
     });
 })(jQuery);

@@ -34,8 +34,9 @@ class Firm(models.Model):
 
 FLAG_TYPE_CHOICES = (
     ('not_firm', 'Organization is not a firm'),
-    ('not_firm_website', 'Not the organization\'s website'),
+    ('not_org_website', 'Not the organization\'s website'),
     ('tech_problem', 'Technical problem with collection'),
+    ('other', 'Other'),
     ('complete', 'Data collection for this organization is complete'),
 )
 class Flag(models.Model):
@@ -45,6 +46,9 @@ class Flag(models.Model):
     resolved = models.BooleanField(default=False)
     notes = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return "%s '%s' flag for %s from %s" % ("Unresolved" if not self.resolved else "resolved", self.type, self.firm.domain, self.created.isoformat())
 
 class BioPage(models.Model):
     firm = models.ForeignKey(Firm)

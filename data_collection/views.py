@@ -29,6 +29,10 @@ class ViewLogCreate(generics.CreateAPIView):
     queryset = ViewLog.objects.all()
     serializer_class = ViewLogSerializer
 
+class FlagCreate(generics.CreateAPIView):
+    queryset = Flag.objects.all()
+    serializer_class = FlagSerializer
+
 # a little bit of hackery on the JWT endpoint to start new sessions on login
 from rest_framework_jwt.views import ObtainJSONWebToken
 from rest_framework import status
