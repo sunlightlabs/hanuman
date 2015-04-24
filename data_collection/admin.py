@@ -5,9 +5,14 @@ from models import *
 from jsonfield.forms import JSONFormField
 from widgets import AceJSONWidget
 
+class BioPageInline(admin.TabularInline):
+    model = BioPage
+    readonly_fields = ('url', 'data', 'firm')
+
 @admin.register(Session)
 class SessionAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('id', 'user', 'start')
+    inlines = [BioPageInline]
 
 @admin.register(Firm)
 class FirmAdmin(admin.ModelAdmin):

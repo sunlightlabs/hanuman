@@ -17,6 +17,9 @@ class Session(models.Model):
             sess.save()
         return sess
 
+    def __str__(self):
+        return "%s on %s" % (self.user.username, self.start.date().isoformat())
+
     class Meta:
         index_together = (('user', 'start'))
 
@@ -25,6 +28,9 @@ class Firm(models.Model):
     domain = models.TextField()
     count = models.PositiveIntegerField()
     external_id = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.name
 
 FLAG_TYPE_CHOICES = (
     ('not_firm', 'Organization is not a firm'),
@@ -46,6 +52,10 @@ class BioPage(models.Model):
     url = models.URLField()
     data = JSONField()
     created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        url = self.url if len(self.url) < 30 else "%s...%s" % (self.url[:15], self.url[-15:])
+        return "%s from %s" % (url, self.created.isoformat())
 
 class ViewLog(models.Model):
     firm = models.ForeignKey(Firm)
