@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from hanuman.data_collection.models import Firm
+from data_collection.models import Firm
 import json
 
 class Command(BaseCommand):

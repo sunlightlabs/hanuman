@@ -19,8 +19,10 @@
       .container-main {
         padding-left: 0;
       }
-      .frame-container {
+      .webview-loading {
         background: #485563 url('images/wv_loading.svg') no-repeat center center;
+        width: 100%;
+        height: 100%;
       }
       webview {
         width: 100%;
@@ -108,6 +110,9 @@
       .options-button {
         float: right;
       }
+      .login-options-button {
+        float: left;
+      }
       .modal-header {
         border-radius: 0 !important;
       }
@@ -158,7 +163,7 @@
 
       <div class="row">
         <div class="col-md-9 frame-container">
-          <webview src=""></webview>
+          <div class="webview-loading"><webview src=""></webview></div>
         </div>
         <div class="col-md-3 sidebar">
           <div class="sidebar-top"></div>

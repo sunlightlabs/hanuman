@@ -428,7 +428,7 @@
 
     // ** Dialogs **
     // settings dialog
-    $('button.options-button').on('click', function() {
+    var settingsDialog = function() {
         BootstrapDialog.show({
             title: 'Settings',
             message: function(dialog) {
@@ -457,7 +457,8 @@
                 }
             ]
         });
-    });
+    };
+    $('button.options-button').on('click', settingsDialog);
 
     // login dialog
     var requireLogin = function(callback) {
@@ -473,7 +474,7 @@
                 $form.find('input').on('keypress', function(evt) {
                     if (evt.keyCode == 13) {
                         evt.preventDefault();
-                        var $button = dialog.getModalFooter().find('button');
+                        var $button = dialog.getModalFooter().find('button.btn-primary');
                         if (!$button.prop('disabled')) {
                             $button.click();
                         }
@@ -482,6 +483,12 @@
                 return $content;
             },
             buttons: [
+                {
+                    label: '',
+                    icon: 'glyphicon glyphicon-wrench',
+                    cssClass: 'btn-default login-options-button',
+                    action: settingsDialog
+                },
                 {
                     label: 'Login',
                     icon: 'glyphicon glyphicon-star',
