@@ -1,5 +1,5 @@
 (function($) {
-    var DEFAULT_HOMEPAGE = 'http://localhost:8003/';
+    var DEFAULT_HOMEPAGE = 'http://biofinder.herokuapp.com/';
 
     var TRUNC_LENGTH = 200;
     var HOMEPAGE;
