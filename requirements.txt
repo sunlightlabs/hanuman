@@ -15,4 +15,5 @@ django-bootstrap3
 
 dj-database-url
 gunicorn
-pip install django-postmark
+django-postmark
+dj-static

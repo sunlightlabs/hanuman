@@ -1,0 +1,1 @@
+web: gunicorn hanuman.wsgi --log-file -
