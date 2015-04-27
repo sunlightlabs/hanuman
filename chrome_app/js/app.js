@@ -41,7 +41,7 @@
 
             setState('find');
 
-            $('webview').attr('src', currentSite.siteUrl());
+            $('webview').css('opacity', 0).attr('src', currentSite.siteUrl());
             if (page) page.site = currentSite;
         });
     }
@@ -381,6 +381,7 @@
 
     webview.on('contentload', function() {
         console.log('iframe loaded a new page');
+        webview.css('opacity', 1);
         webview[0].executeScript({'file': 'js/jquery-2.1.3.min.js'});
         webview[0].executeScript({'file': 'js/injected.js'}, function() {
             webview[0].contentWindow.postMessage('hanuman_hello', '*')
