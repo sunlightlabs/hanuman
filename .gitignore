@@ -1,4 +1,5 @@
 heroku_static
 local_settings.py
+hanuman-build-*.zip
 *.pyc
 .env

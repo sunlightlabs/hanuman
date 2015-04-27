@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
 
-  "name": "Hanuman",
-  "description": "This extension does mysterious things with lobbying",
+  "name": "Lobbyist bio finder",
+  "description": "An experimental Sunlight Foundation data collection tool for lobbying data",
   "version": "0.1",
 
   "icons": {
