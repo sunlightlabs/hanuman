@@ -179,6 +179,7 @@
             
             'click .bio-section .done': 'bioDone',
             'click .add': 'addChunk',
+            'click .clear-well': 'clearWell',
 
             'click .lobbyist-section .btn': 'decideIfLobbyist',
 
@@ -201,17 +202,31 @@
         },
 
         bioDone: function() {
-            this.switchSection(this.$('.lobbyist-section'));
+            var well = this.$('.bio-section .well');
+            if (well.find('.content').html() == "") {
+                this.switchSection(this.$('.lobbyist-section'));
+            } else {
+                BootstrapDialog.alert({message: "You've selected some text that you haven't added to this bio. Please either hit \"add\" to keep it, or \"clear\" to delete it.", title: 'Incomplete selection'})
+            }
         },
 
         addChunk: function() {
             var well = this.$('.bio-section .well');
             var selectedType = this.$('option:selected');
+            
+            var content = well.find('.content').html();
+            if (content) {
+                var chunk = new BioChunk({'parent': this, 'typeLabel': selectedType.html(), 'typeValue': selectedType.attr('value'), selection: well.data('selection'), 'body': well.find('.content').html()});
+                this.bioChunks.push(chunk);
 
-            var chunk = new BioChunk({'parent': this, 'typeLabel': selectedType.html(), 'typeValue': selectedType.attr('value'), selection: well.data('selection'), 'body': well.find('.content').html()});
-            this.bioChunks.push(chunk);
+                this.$('.saved-chunks').append(chunk.render().el);
+                setWellText(well, "");
+            }
+        },
 
-            this.$('.saved-chunks').append(chunk.render().el);
+        clearWell: function() {
+            var well = this.$('.bio-section .well');
+            setWellText(well, "");
         },
 
         decideIfLobbyist: function(evt) {
