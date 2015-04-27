@@ -108,6 +108,7 @@ REGISTRATION_MODERATION = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'heroku_static')
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
@@ -126,7 +127,11 @@ JWT_AUTH = {
 }
 
 
-try:
-    from local_settings import *
-except ImportError:
-    pass
+if 'DYNO' in os.environ:
+    # we're on heroku
+    from heroku_settings import *
+else:
+    try:
+        from local_settings import *
+    except ImportError:
+        pass

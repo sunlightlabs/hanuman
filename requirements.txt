@@ -12,3 +12,7 @@ requests
 
 django-bootstrap3
 -e git+https://github.com/apendleton/django-registration2.git@django18#egg=django_registration2-django18
+
+dj-database-url
+gunicorn
+pip install django-postmark
