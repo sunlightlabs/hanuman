@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import os, subprocess, zipfile, json
 import git
 
@@ -10,10 +12,10 @@ repo = git.Repo("..")
 commit_count = len(list(repo.head.commit.iter_parents())) + 1
 
 manifest = json.load(open("manifest.json"))
-version = ".".join((manifest['version'], str(commit_count)))
+version = "%s.%s-%s" % (manifest['version'], str(commit_count), repo.head.commit.hexsha[:6])
 manifest['version'] = version
 
-zipname = "../hanuman-build-%s.zip" % version
+zipname = "../build/hanuman-build-%s.zip" % version
 subprocess.Popen(["zip", zipname, "-r", ".", "-x", "manifest.json"]).communicate()
 
 # add the manifest
