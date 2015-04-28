@@ -7,8 +7,8 @@
   <h1>User menu</h1>
   <p><em>Logged in as &ldquo;{{ user.get_username }}&rdquo;</em></p>
   <ul>
-    <li><a href="">Download Chrome extension</a></li>
-    <li><a href="">Contact us</a></li>
+    <li><a href="{{ app_url }}">Download Chrome extension</a></li>
+    <li><a href="{{ contact_url }}">Contact us</a></li>
     <li><a href="{% url 'django.contrib.auth.views.password_change' %}">Change password</a></li>
   </ul>
 </div>

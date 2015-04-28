@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from django.shortcuts import render, redirect
 from django.contrib.auth.views import login
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 
 
 def home(request):
@@ -11,4 +12,4 @@ def home(request):
 
 @login_required
 def profile(request):
-    return render(request, template_name='landing_site/profile.html')
+    return render(request, template_name='landing_site/profile.html', context={'app_url': getattr(settings, 'CHROME_APP_URL', ''), 'contact_url': getattr(settings, 'CONTACT_URL', '')})
