@@ -27,4 +27,7 @@ subprocess.Popen(["zip", zipname, "-r", ".", "-x", "manifest.json"]).communicate
 
 # add the manifest
 with zipfile.ZipFile(zipname, 'a') as zf:
-    zf.writestr('manifest.json', json.dumps(manifest, indent=2))
+    manifest_str = json.dumps(manifest, indent=2)
+    # swap out localhost for the real domain
+    manifest_str = manifest_str.replace("localhost:8003", "biofinder.herokuapp.com")
+    zf.writestr('manifest.json', manifest_str)

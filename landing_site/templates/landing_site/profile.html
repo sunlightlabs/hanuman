@@ -7,9 +7,28 @@
   <h1>User menu</h1>
   <p><em>Logged in as &ldquo;{{ user.get_username }}&rdquo;</em></p>
   <ul>
-    <li><a href="{{ app_url }}">Download Chrome extension</a></li>
+    <li><a class="download-url" href="{{ app_url }}">Download Chrome app</a></li>
     <li><a href="{{ contact_url }}">Contact us</a></li>
     <li><a href="{% url 'django.contrib.auth.views.password_change' %}">Change password</a></li>
   </ul>
 </div>
+{% endblock %}
+{% block extrajs %}
+<script type="text/javascript">
+(function($) {
+    var link = $('.download-url');
+    var url = link.attr('href');
+    if (url && chrome) {
+        var id = url.split("/").pop();
+        chrome.runtime.sendMessage(id, 'ping', function(response) {
+            if (response == 'pong') {
+                link.attr('href', '').html("Launch Chrome app").on('click', function(evt) {
+                    evt.preventDefault();
+                    chrome.runtime.sendMessage(id, 'launch');
+                })
+            }
+        });
+    }
+})(jQuery);
+</script>
 {% endblock %}
