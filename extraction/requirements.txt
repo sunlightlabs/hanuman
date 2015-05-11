@@ -1,0 +1,5 @@
+lxml
+gevent
+
+-e git+https://github.com/sunlightlabs/nanospider.git#egg=nanospider
+-e git+https://github.com/sunlightlabs/mlscrape.git#egg=mlscrape
