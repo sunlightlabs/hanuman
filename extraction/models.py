@@ -8,7 +8,7 @@ class FirmTrainingSet(models.Model):
     # use a UUID because we use the ID to name stuff in the filesystem and this ensures uniqueness of files across databases
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
-    firm = models.ForeignKey(Firm, unique=True)
+    firm = models.OneToOneField(Firm)
 
     spider_complete = models.BooleanField(default=False)
     page_classifier_trained = models.BooleanField(default=False)

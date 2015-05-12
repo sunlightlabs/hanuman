@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = (
     'landing_site',
     'data_collection',
+    'extraction',
 
     'rest_framework',
     'registration',
