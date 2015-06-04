@@ -20,7 +20,7 @@ hours = int((time.time() - time.mktime(dateutil.parser.parse('2015-01-01').timet
 manifest = json.load(open("manifest.json"))
 version = "%s.%s.%s" % (manifest['version'], str(commit_count), str(hours))
 manifest['version'] = version
-manifest['version_name'] = "%s@%s" % (repo.active_branch.name, repo.head.commit.hexsha)
+manifest['version_name'] = "%s / %s@%s" % (version, repo.active_branch.name, repo.head.commit.hexsha)
 
 zipname = "../build/hanuman-build-%s.zip" % version
 subprocess.Popen(["zip", zipname, "-r", ".", "-x", "manifest.json"]).communicate()

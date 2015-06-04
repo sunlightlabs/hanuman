@@ -3,3 +3,4 @@ local_settings.py
 build/*.zip
 *.pyc
 .env
+_test*
