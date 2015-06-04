@@ -127,6 +127,8 @@ JWT_AUTH = {
     'JWT_ALLOW_REFRESH': True
 }
 
+MODEL_DIR = os.path.join(BASE_DIR, 'models')
+
 
 if 'DYNO' in os.environ:
     # we're on heroku

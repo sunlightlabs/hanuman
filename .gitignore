@@ -4,3 +4,4 @@ build/*.zip
 *.pyc
 .env
 _test*
+models/*

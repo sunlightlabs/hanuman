@@ -15,6 +15,15 @@ class FirmTrainingSet(models.Model):
     element_classifier_trained = models.BooleanField(default=False)
     extraction_complete = models.BooleanField(default=False)
 
+    @classmethod
+    def get_for_firm(cls, firm):
+        try:
+            fts = FirmTrainingSet.objects.get(firm=firm)
+        except FirmTrainingSet.DoesNotExist:
+            fts = FirmTrainingSet(firm=firm)
+            fts.save()
+        return fts
+
 # this is a single, extracted bio (vs BioPage in data collection, which might have multiple bios on the same page)
 class Bio(models.Model):
     firm = models.ForeignKey(Firm)
