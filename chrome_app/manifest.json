@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
 
-  "name": "Lobbyist bio finder",
+  "name": "Lobbyist bio finder (DEV)",
   "description": "An experimental Sunlight Foundation data collection tool for lobbying data",
   "version": "0.1",
 

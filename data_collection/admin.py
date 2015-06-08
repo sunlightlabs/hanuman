@@ -50,3 +50,7 @@ class BioPageAdmin(admin.ModelAdmin):
 @admin.register(ViewLog)
 class ViewLogAdmin(admin.ModelAdmin):
     form = ViewLogForm
+
+@admin.register(CollectionSettings)
+class CollectionSettingsAdmin(admin.ModelAdmin):
+    pass

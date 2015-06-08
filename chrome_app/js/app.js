@@ -21,7 +21,9 @@
     var panelGroup = $('.panel-group');
     var newFirm = function() {
         var firm = new Firm({id: 'next'});
-        firm.fetch().done(function() {
+        var fetch = firm.fetch();
+
+        fetch.done(function() {
             currentSite = firm;
             currentUrl = null;
             visited = [];
@@ -44,6 +46,11 @@
             $('webview').css('opacity', 0).attr('src', currentSite.siteUrl());
             if (page) page.site = currentSite;
         });
+
+        fetch.fail(function() {
+            panelGroup.html('');
+            BootstrapDialog.alert({message: "There aren't any more firms for you to work on.", title: 'No more firms!'});
+        })
     }
 
     var leaveFirm = function(callback) {
@@ -129,7 +136,7 @@
             this.options = options || {};
             this.$el.addClass('panel-default').addClass(this.label + '-panel').attr('data-state', this.label);
         },
-        
+
         render: function() {
             this.$el.html(tim($('.' + this.label + '-panel-tpl').html(), this.options));
             return this;
@@ -168,7 +175,7 @@
             // go to the next panel for the first time
             setState('bio');
             page.url = currentUrl;
-        }     
+        }
     });
 
     var BioPanel = Panel.extend({
@@ -176,7 +183,7 @@
 
         events: _.extend({
             'click .name-section .done': 'nameDone',
-            
+
             'click .bio-section .done': 'bioDone',
             'click .add': 'addChunk',
             'click .clear-well': 'clearWell',
@@ -213,7 +220,7 @@
         addChunk: function() {
             var well = this.$('.bio-section .well');
             var selectedType = this.$('option:selected');
-            
+
             var content = well.find('.content').html();
             if (content) {
                 var chunk = new BioChunk({'parent': this, 'typeLabel': selectedType.html(), 'typeValue': selectedType.attr('value'), selection: well.data('selection'), 'body': well.find('.content').html()});
@@ -244,7 +251,7 @@
             var _this = this;
             setTimeout(function() {
                 var $inactives = $section.parent().find('.panel-section').not($section);
-                
+
                 // class toggling
                 $inactives.removeClass('panel-section-active').addClass('panel-section-inactive');
                 $section.removeClass('panel-section-inactive').addClass('panel-section-active');
@@ -275,7 +282,7 @@
             this.switchSection($clicked);
         }
     });
-    
+
     var BioChunk = Backbone.View.extend({
         events: {
             'click .remove': 'remove'
@@ -292,7 +299,7 @@
 
         remove: function() {
             this.$el.remove();
-            
+
             var _this = this;
             this.options.parent.bioChunks = _.reject(this.options.parent.bioChunks, function(chunk) { return chunk == _this; });
         }
@@ -308,10 +315,10 @@
 
         render: function() {
             Panel.prototype.render.call(this);
-            
+
             // hack to poach Bootstrap Dialog's spinner
             this._fakeDialog = new BootstrapDialog();
-            
+
             this.$yesButton = this.$('button.yes');
             this._fakeDialog.enhanceButton(this.$yesButton);
 
@@ -324,7 +331,7 @@
         pickYes: function() {
             // we need a new person box
             var newPanel = addBioPanel(false);
-            
+
             newPanel.$('.panel-heading a').click();
             setState('bio');
         },
@@ -364,9 +371,9 @@
 
                 // go back to the find panel, for the not-first time
                 findPanel.setFirst(false);
-                
+
                 setState('find');
-                
+
                 // replace the bio panel with a new one
                 addBioPanel(true);
             })
@@ -396,7 +403,7 @@
         },
         'updateSelection': function(selection) {
             console.log(selection);
-            
+
             if (currentState == 'bio') {
                 // only grab the currently-expanded bio panel
                 var $section = $('.bio-panel .panel-collapse.in .panel-section-active');
@@ -500,7 +507,7 @@
 
                         // do the actual logging in
                         var $content = dialog.getModalContent();
-                        
+
                         var username = $content.find('#id_username').val(),
                             password = $content.find('#id_password').val();
 
@@ -540,9 +547,9 @@
                     })
                 })
 
-                var $content = $("<div>").text("As you've been exploring this firm's site, we've kept track of which pages you marked as bio pages and which you didn't. " + 
-                        "Please review how you've classified these pages below to make sure we got it right. You can drag pages from one column to the other if they're in " + 
-                        "the wrong one. When you're ready, hit 'Save,' below, or, if you want to visit either some more bio or non-bio pages to help us better learn to " + 
+                var $content = $("<div>").text("As you've been exploring this firm's site, we've kept track of which pages you marked as bio pages and which you didn't. " +
+                        "Please review how you've classified these pages below to make sure we got it right. You can drag pages from one column to the other if they're in " +
+                        "the wrong one. When you're ready, hit 'Save,' below, or, if you want to visit either some more bio or non-bio pages to help us better learn to " +
                         "tell the difference, hit 'go back' and browse around some more.");
                 var $lists = $("<div>").addClass('row').appendTo($content);
                 _.each(['bio', 'nonbio'], function(type) {
@@ -587,7 +594,7 @@
                         dialog.close();
                         if (callback) {
                             callback();
-                        }  
+                        }
                     })
                 }}
             ]
@@ -615,27 +622,22 @@
 
                         // grab the radio contents
                         var $content = dialog.getModalContent();
-                        
+
                         var reason = $content.find('input[type=radio]:checked').val();
                         var notes = $content.find('input[type=text]').val();
 
                         dialog.close();
 
-                        if (reason == "tired") {
-                            // we don't submit a flag for this
-                            if (callback) callback();
-                        } else {
-                            var flag = new Flag({
-                                type: reason,
-                                firm: currentSite.id
-                            });
-                            if (reason == "other") {
-                                flag.set('notes', notes);
-                            }
-                            flag.save().then(function() {
-                                if (callback) callback();
-                            })
+                        var flag = new Flag({
+                            type: reason,
+                            firm: currentSite.id
+                        });
+                        if (reason == "other") {
+                            flag.set('notes', notes);
                         }
+                        flag.save().then(function() {
+                            if (callback) callback();
+                        })
                     }
                 }
             ]
@@ -689,6 +691,9 @@
                 requireLogin(function() {
                     _sync.call(_this, method, _model, _.clone(options)).done(function() { dfd.done.apply(dfd, arguments); });
                 });
+            } else if (xhr.status == 404) {
+                // no dialog here; the fall-through is really just meant for 500 errors, but other errors we handle case by case
+                xhr.fail(function() { dfd.reject.apply(dfd, arguments); });
             } else {
                 // something else is going on
                 BootstrapDialog.show({
@@ -738,7 +743,7 @@
         }
     })
 
-    
+
 
     // READY, SET, GO!
     // retrieve the settings, force a login, and start

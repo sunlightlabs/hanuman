@@ -3,6 +3,9 @@ from django.contrib.auth.models import User
 from postgres.fields import JSONField
 from django.contrib.postgres.fields import ArrayField
 
+from django.dispatch import receiver
+from django.db.models.signals import pre_delete, post_save
+
 class Session(models.Model):
     user = models.ForeignKey(User)
     start = models.DateTimeField(auto_now_add=True)
@@ -70,3 +73,21 @@ class ViewLog(models.Model):
 
     def __str__(self):
         return "%s from %s" % (self.firm.domain, self.created.isoformat())
+
+class CollectionSettings(models.Model):
+    user = models.OneToOneField(User)
+    is_test_user = models.BooleanField(default=False)
+    is_assigned_user = models.BooleanField(default=False)
+
+    def __str__(self):
+        return str(self.user)
+
+# make sure we have settings for each user at create or save time
+@receiver(post_save, sender=User)
+def ensure_settings(sender, instance, created, **kwargs):
+    CollectionSettings.objects.get_or_create(user=instance)
+
+class Assignment(models.Model):
+    user = models.ForeignKey(User)
+    firm = models.ForeignKey(Firm)
+    complete = models.BooleanField(default=False)
