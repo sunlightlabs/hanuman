@@ -535,6 +535,31 @@
 
     // view log dialog
     var confirmViewLog = function(callback) {
+        var saveButton = function(dialog) {
+            var $content = dialog.getModalContent();
+
+            // now save it all
+            var viewLog = new ViewLog({
+                'firm': currentSite.id,
+                'bio_pages': _.map($content.find('.bio-list li'), function(el) { return $(el).attr('data-url'); }),
+                'non_bio_pages': _.map($content.find('.nonbio-list li'), function(el) { return $(el).attr('data-url'); }),
+                'suspect': this.hasClass('btn-danger')
+            });
+            dialog.enableButtons(false);
+            this.spin();
+
+            var _this = this;
+            viewLog.save().then(function() {
+                dialog.enableButtons(true);
+                _this.stopSpin();
+
+                dialog.close();
+                if (callback) {
+                    callback();
+                }
+            })
+        }
+
         BootstrapDialog.show({
             size: BootstrapDialog.SIZE_WIDE,
             title: 'Pages viewed',
@@ -547,10 +572,11 @@
                     })
                 })
 
-                var $content = $("<div>").text("As you've been exploring this firm's site, we've kept track of which pages you marked as bio pages and which you didn't. " +
+                var $content = $("<div>").html("As you've been exploring this firm's site, we've kept track of which pages you marked as bio pages and which you didn't. " +
                         "Please review how you've classified these pages below to make sure we got it right. You can drag pages from one column to the other if they're in " +
                         "the wrong one. When you're ready, hit 'Save,' below, or, if you want to visit either some more bio or non-bio pages to help us better learn to " +
-                        "tell the difference, hit 'go back' and browse around some more.");
+                        "tell the difference, hit 'go back' and browse around some more." +
+                        "<br/><br/><strong>If the list of visited pages looks unfixably fishy, you can skip saving it and move on using the 'skip' button below.</strong>");
                 var $lists = $("<div>").addClass('row').appendTo($content);
                 _.each(['bio', 'nonbio'], function(type) {
                     var $listC = $("<div>").addClass('col-sm-6').html("<h4>" + {bio: "Bio", nonbio: 'Non-bio'}[type] + " pages</h4>");
@@ -574,29 +600,8 @@
                 {label: "Go back", cssClass: 'btn-warning', action: function(dialog) {
                     dialog.close();
                 }},
-                {label: 'Save and continue', cssClass: 'btn-success', action: function(dialog) {
-                    var $content = dialog.getModalContent();
-
-                    // now save it all
-                    var viewLog = new ViewLog({
-                        'firm': currentSite.id,
-                        'bio_pages': _.map($content.find('.bio-list li'), function(el) { return $(el).attr('data-url'); }),
-                        'non_bio_pages': _.map($content.find('.nonbio-list li'), function(el) { return $(el).attr('data-url'); }),
-                    });
-                    dialog.enableButtons(false);
-                    this.spin();
-
-                    var _this = this;
-                    viewLog.save().then(function() {
-                        dialog.enableButtons(true);
-                        _this.stopSpin();
-
-                        dialog.close();
-                        if (callback) {
-                            callback();
-                        }
-                    })
-                }}
+                {label: 'Skip logging and continue', cssClass: 'btn-danger', action: saveButton},
+                {label: 'Save and continue', cssClass: 'btn-success', action: saveButton}
             ]
         })
     }
