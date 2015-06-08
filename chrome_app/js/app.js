@@ -58,10 +58,10 @@
 
         if (visitedBio.length) {
             confirmViewLog(function() {
-                chooseFlag(callback);
+                chooseFlag(callback, false);
             })
         } else {
-            chooseFlag(callback);
+            chooseFlag(callback, true);
         }
     }
 
@@ -602,7 +602,7 @@
     }
 
     // flag selection dialog
-    var chooseFlag = function(callback) {
+    var chooseFlag = function(callback, allowCancel) {
         BootstrapDialog.show({
             title: 'All done with this site?',
             closable: false,
@@ -611,36 +611,43 @@
                 var $content = $(tim($('.flag-dialog-tpl').html()));
                 return $content;
             },
-            buttons: [
-                {
-                    label: 'Save',
-                    cssClass: 'btn-primary',
-                    action: function(dialog) {
-                        var $button = this;
-                        $button.disable();
-                        $button.spin();
-
-                        // grab the radio contents
-                        var $content = dialog.getModalContent();
-
-                        var reason = $content.find('input[type=radio]:checked').val();
-                        var notes = $content.find('input[type=text]').val();
-
+            buttons: _.flatten([
+                allowCancel ? [
+                    {label: "Go back", cssClass: 'btn-warning', action: function(dialog) {
                         dialog.close();
+                    }}
+                ] : [],
+                [
+                    {
+                        label: 'Save',
+                        cssClass: 'btn-primary',
+                        action: function(dialog) {
+                            var $button = this;
+                            $button.disable();
+                            $button.spin();
 
-                        var flag = new Flag({
-                            type: reason,
-                            firm: currentSite.id
-                        });
-                        if (reason == "other") {
-                            flag.set('notes', notes);
+                            // grab the radio contents
+                            var $content = dialog.getModalContent();
+
+                            var reason = $content.find('input[type=radio]:checked').val();
+                            var notes = $content.find('input[type=text]').val();
+
+                            dialog.close();
+
+                            var flag = new Flag({
+                                type: reason,
+                                firm: currentSite.id
+                            });
+                            if (reason == "other") {
+                                flag.set('notes', notes);
+                            }
+                            flag.save().then(function() {
+                                if (callback) callback();
+                            })
                         }
-                        flag.save().then(function() {
-                            if (callback) callback();
-                        })
                     }
-                }
-            ]
+                ]
+            ])
         });
     }
 
