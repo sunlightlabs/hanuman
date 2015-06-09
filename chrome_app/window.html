@@ -177,7 +177,7 @@
 
           <!-- main wizard accordion -->
           <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-          
+
           </div>
           <!-- end accordion -->
         </div>
@@ -189,13 +189,13 @@
       <div class="panel-heading" role="tab" id="heading-one">
         <h4 class="panel-title">
           <a data-toggle="collapse" data-parent="#accordion" href="#collapse-one" aria-expanded="true" aria-controls="collapse-one">Find a bio page</a>
-          
+
         </h4>
       </div>
       <div id="collapse-one" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading-one">
         <div class="panel-body">
-          Navigate around the lobbying website to the left until you find <span class="first">a</span><span class="not-first">another</span> page with staff bios on it. We'll assume if you navigate away from a page without clicking the "found one" button, that it's not a bio page.
-          
+          At left you should see <strong>{{domain}}</strong>, which should be a lobbying website. Navigate around it until you find <span class="first">a</span><span class="not-first">another</span> page with staff bios on it. We'll assume if you navigate away from a page without clicking the "found one" button, that it's not a bio page.
+
           <div class="button-row">
             <button type="button" class="btn btn-success found-one">Found one!</button>
             <div class="lesser-buttons">
@@ -217,16 +217,16 @@
           <div class="chevron-rel">
             <div class="chevron"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></div>
           </div>
-          
+
           <div class="panel-section panel-section-first name-section">
             Hightlight the name of <span class="first">a</span><span class="not-first">another</span> person with a bio. If the name occurs both in a page or section title and in the bio text, prefer the version in the page title.
             <div class="well"><span class="placeholder">[name]</span><span class="content"></span></div>
-            
+
             <div class="button-row">
               <button type="button" class="btn btn-success done">Done</button>
             </div>
           </div>
-          
+
           <div class="panel-section bio-section">
             Hightlight the text of this person's bio, as well as any lists of information about them (where they attended school, etc.), then hit "save." You can save multiple chunks.
             <div class="well"><span class="placeholder">[bio text]</span><span class="content"></span></div>
@@ -237,22 +237,22 @@
                 <button type="button" class="btn btn-sm btn-info add"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add</button>
               </div>
             </div>
-            
+
             <div class="saved-chunks"></div>
 
             <div class="button-row">
               <button type="button" class="btn btn-success done">Done</button>
             </div>
           </div>
-          
+
           <div class="panel-section lobbyist-section">
             Does it look like this person lobbies the government?
-            
+
             <div class="button-row">
               <button type="button" class="btn btn-sm btn-success yes">Yes</button> &nbsp;<button type="button" class="btn btn-sm btn-danger no">No</button> &nbsp;<button type="button" class="btn btn-sm dunno">Don't know</button>
             </div>
           </div>
-        
+
         </div>
       </div>
     </script>
@@ -266,7 +266,7 @@
       <div id="collapse-five" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-five">
         <div class="panel-body">
           Are there more bios on this page?
-          
+
           <div class="button-row">
             <button type="button" class="btn btn-success yes">Yes</button> &nbsp;<button type="button" class="btn btn-danger no">No, save results</button>
           </div>

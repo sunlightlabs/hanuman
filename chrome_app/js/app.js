@@ -31,7 +31,7 @@
             pageTitles = {};
 
             // make all the panels
-            findPanel = new FindPanel();
+            findPanel = new FindPanel({domain: firm.get('domain')});
             bioPanels = [new BioPanel()];
             anyMorePanel = new AnyMorePanel();
 
@@ -574,8 +574,8 @@
 
                 var $content = $("<div>").html("As you've been exploring this firm's site, we've kept track of which pages you marked as bio pages and which you didn't. " +
                         "Please review how you've classified these pages below to make sure we got it right. You can drag pages from one column to the other if they're in " +
-                        "the wrong one. When you're ready, hit 'Save,' below, or, if you want to visit either some more bio or non-bio pages to help us better learn to " +
-                        "tell the difference, hit 'go back' and browse around some more." +
+                        "the wrong one. Ideally you'll have <strong>5&ndash;10</strong> in each category. When you're ready, hit 'Save,' below, or, if you want to visit either " +
+                        "some more bio or non-bio pages to help us better learn to tell the difference, hit 'go back' and browse around some more." +
                         "<br/><br/><strong>If the list of visited pages looks unfixably fishy, you can skip saving it and move on using the 'skip' button below.</strong>");
                 var $lists = $("<div>").addClass('row').appendTo($content);
                 _.each(['bio', 'nonbio'], function(type) {
