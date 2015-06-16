@@ -17,3 +17,5 @@ dj-database-url
 gunicorn
 django-postmark
 dj-static
+
+raven

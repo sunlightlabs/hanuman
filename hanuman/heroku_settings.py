@@ -13,3 +13,8 @@ POSTMARK_API_KEY = os.environ.get('POSTMARK_API_KEY', '')
 
 CHROME_APP_URL = os.environ.get('CHROME_APP_URL', '')
 CONTACT_URL = os.environ.get('CONTACT_URL', '')
+
+if 'RAVEN_DSN' in os.environ:
+    RAVEN_CONFIG = {
+        'dsn': os.environ['RAVEN_DSN'],
+    }
