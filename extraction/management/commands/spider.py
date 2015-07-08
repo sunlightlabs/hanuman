@@ -3,6 +3,8 @@ from data_collection.models import Firm
 from extraction.models import FirmTrainingSet
 from django.conf import settings
 
+from nanospider import Spider
+
 import os
 
 class Command(BaseCommand):
@@ -28,8 +30,8 @@ class Command(BaseCommand):
 
             fts = FirmTrainingSet.get_for_firm(firm)
 
-            s = Spider(firm.domain, os.path.join(scrape_dir, str(fts.id) + ".db"), workers=4, retry_attempts=2)
-            s.crawl()
+            spider = Spider(firm.domain, os.path.join(scrape_dir, str(fts.id) + ".db"), workers=4, retry_attempts=2)
+            spider.crawl()
 
             fts.spider_complete = True
             fts.save()
